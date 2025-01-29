@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { AuthOptions, SessionStrategy } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { connectDB } from '@/lib/db'
 import { User as IUser } from '@/models/user'
@@ -8,7 +8,7 @@ import { User } from '@/models/user'
 import { DefaultUser } from 'next-auth'
 import { Session } from 'next-auth'
 
-const authOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -56,7 +56,7 @@ const authOptions = {
     })
   ],
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt' as SessionStrategy
   },
   pages: {
     signIn: '/auth/login',

@@ -6,6 +6,8 @@ export interface IUser extends Document {
   password: string;
   role: string;
   name?: string;
+  inviteCode?: string;
+  createdAt?: Date;
   // add other user fields as needed
 }
 
