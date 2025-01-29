@@ -4,6 +4,12 @@ import { ShareableLink } from '@/models/ShareableLink'
 import { getAIResponse } from '@/lib/aiService'
 import { handleError } from '@/utils/handleErrors'
 
+interface DailyStat {
+  date: Date;
+  views: number;
+  // add other stat properties if needed
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: { linkId: string } }
@@ -34,7 +40,7 @@ export async function POST(
     today.setHours(0, 0, 0, 0)
 
     const statsIndex = link.dailyStats.findIndex(
-      stat => new Date(stat.date).getTime() === today.getTime()
+      (stat: DailyStat) => new Date(stat.date).getTime() === today.getTime()
     )
 
     if (statsIndex === -1) {
