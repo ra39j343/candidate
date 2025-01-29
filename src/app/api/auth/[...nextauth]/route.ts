@@ -1,9 +1,10 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { connectDB } from '@/lib/db'
-import { User } from '@/models/user'
+import { User as IUser } from '@/models/user'
 import bcrypt from 'bcrypt'
 import { JWT } from 'next-auth/jwt'
+import { User as UserModel } from '@/models/user'
 
 const authOptions = {
   providers: [
@@ -20,7 +21,7 @@ const authOptions = {
 
         await connectDB()
 
-        const user = await User.findOne({ username: credentials.username })
+        const user = await UserModel.findOne({ username: credentials.username })
         if (!user) {
           throw new Error('Invalid credentials')
         }
@@ -64,7 +65,7 @@ const authOptions = {
       user 
     }: { 
       token: JWT; 
-      user?: User 
+      user?: IUser 
     }) {
       if (user) {
         token.role = user.role
