@@ -1,0 +1,34 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { connectDB } from '@/lib/db'
+import { Content } from '@/models/content'
+import { getToken } from 'next-auth/jwt'
+import { handleError } from '@/utils/handleErrors'
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const token = await getToken({ req })
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    await connectDB()
+
+    const content = await Content.findById(params.id)
+    if (!content) {
+      return NextResponse.json({ error: 'Content not found' }, { status: 404 })
+    }
+
+    if (content.userId.toString() !== token.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    await Content.findByIdAndDelete(params.id)
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return handleError(error, 'Error deleting content')
+  }
+} 
