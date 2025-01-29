@@ -14,7 +14,7 @@ export async function POST(
 ) {
   try {
     const token = await getToken({ req });
-    if (!token) {
+    if (!token?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
