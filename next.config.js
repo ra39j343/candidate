@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',  // Changed to export for static output
-  distDir: 'public', // Changed to public for Vercel compatibility
+  output: 'standalone',
+  distDir: '.next',
   images: {
-    unoptimized: true, // Required for static export
-    domains: ['avatars.githubusercontent.com'], // Add any image domains you're using
+    domains: ['avatars.githubusercontent.com']
   },
   // Enable if you need to handle specific headers
   headers: async () => {
