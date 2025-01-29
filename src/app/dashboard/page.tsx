@@ -14,6 +14,16 @@ import FileUpload from '@/components/dashboard/FileUpload'
 import TextUpload from '@/components/dashboard/TextUpload'
 import { useRouter } from 'next/navigation'
 
+interface Link {
+  id: string;
+  createdAt: string;
+  dailyStats: Array<{
+    date: string;
+    chatsInitiated: number;
+    messagesCount: number;
+  }>;
+}
+
 const truncateText = (text: string, maxLength: number = 50) => {
   if (!text) return '';
   const firstSentence = text.split(/[.!?]/)[0]; // Get first sentence
@@ -22,7 +32,7 @@ const truncateText = (text: string, maxLength: number = 50) => {
 };
 
 export default function DashboardPage() {
-  const [links, setLinks] = useState([])
+  const [links, setLinks] = useState<Link[]>([])
   const [cvs, setCvs] = useState([])
   const router = useRouter()
 
