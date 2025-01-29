@@ -1,11 +1,11 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
-export default function PreviewPage() {
-  const router = useRouter()
+function PreviewContent() {
   const searchParams = useSearchParams()
   const content = searchParams.get('content')
   const filename = searchParams.get('filename')
@@ -32,5 +32,13 @@ export default function PreviewPage() {
         Back to Dashboard
       </Button>
     </div>
+  )
+}
+
+export default function PreviewPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PreviewContent />
+    </Suspense>
   )
 } 

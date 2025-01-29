@@ -4,6 +4,8 @@ import { Content } from '@/models/content'
 import { getToken } from 'next-auth/jwt'
 import { handleError } from '@/utils/handleErrors'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req })
