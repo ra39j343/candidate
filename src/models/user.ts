@@ -1,9 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+export interface IUser extends Document {
+  email: string;
+  password: string;
+  role: string;
+  name?: string;
+  // add other user fields as needed
+}
+
+const userSchema = new mongoose.Schema<IUser>({
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, required: true },
+  name: String,
   inviteCode: String,
   createdAt: { type: Date, default: Date.now }
 });
@@ -22,4 +32,4 @@ userSchema.methods.generateInviteCode = function() {
   return Math.random().toString(36).substring(2, 15);
 };
 
-export const User = mongoose.models.User || mongoose.model('User', userSchema); 
+export const User = mongoose.models.User || mongoose.model<IUser>('User', userSchema); 
