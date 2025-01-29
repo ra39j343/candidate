@@ -1,12 +1,13 @@
 'use client'
 
 import { Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
 function PreviewContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const content = searchParams.get('content')
   const filename = searchParams.get('filename')
   const uploaded = searchParams.get('uploaded') === 'true'
