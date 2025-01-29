@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',  // This ensures proper build output
-  distDir: '.next',      // Specify the build output directory
+  output: 'export',  // Changed to export for static output
+  distDir: 'public', // Changed to public for Vercel compatibility
   images: {
+    unoptimized: true, // Required for static export
     domains: ['avatars.githubusercontent.com'], // Add any image domains you're using
   },
   // Enable if you need to handle specific headers
