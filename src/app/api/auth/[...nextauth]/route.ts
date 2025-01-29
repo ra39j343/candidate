@@ -5,6 +5,7 @@ import { User as IUser } from '@/models/user'
 import bcrypt from 'bcrypt'
 import { JWT } from 'next-auth/jwt'
 import { User } from '@/models/user'
+import { DefaultUser } from 'next-auth'
 
 const authOptions = {
   providers: [
@@ -65,7 +66,10 @@ const authOptions = {
       user 
     }: { 
       token: JWT; 
-      user?: IUser 
+      user?: DefaultUser & { 
+        role?: string;
+        id: string;
+      }
     }) {
       if (user) {
         token.role = user.role
