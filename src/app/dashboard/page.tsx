@@ -24,6 +24,14 @@ interface Link {
   }>;
 }
 
+interface CV {
+  _id: string;
+  fileName: string;
+  content: string;
+  contentType: string;
+  createdAt: string;
+}
+
 const truncateText = (text: string, maxLength: number = 50) => {
   if (!text) return '';
   const firstSentence = text.split(/[.!?]/)[0]; // Get first sentence
@@ -33,7 +41,7 @@ const truncateText = (text: string, maxLength: number = 50) => {
 
 export default function DashboardPage() {
   const [links, setLinks] = useState<Link[]>([])
-  const [cvs, setCvs] = useState([])
+  const [cvs, setCvs] = useState<CV[]>([])
   const router = useRouter()
 
   const fetchContent = async () => {
