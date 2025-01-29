@@ -11,6 +11,7 @@ export interface ICV {
   fileName: string;
   content: string;
   contentType: string;
+  type: 'text' | 'pdf';
   createdAt: string;
 }
 
@@ -22,6 +23,16 @@ export interface ILink {
     chatsInitiated: number;
     messagesCount: number;
   }>;
+}
+
+// Common type for content items in dashboard
+export interface ContentItem {
+  _id: string;
+  fileName: string;
+  content: string;
+  type: 'text' | 'pdf';
+  contentType: string;
+  createdAt: string;
 }
 
 // ... other shared types 

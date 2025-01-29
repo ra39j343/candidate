@@ -13,24 +13,7 @@ import ShareableLinks from '@/components/dashboard/ShareableLinks'
 import FileUpload from '@/components/dashboard/FileUpload'
 import TextUpload from '@/components/dashboard/TextUpload'
 import { useRouter } from 'next/navigation'
-
-interface Link {
-  id: string;
-  createdAt: string;
-  dailyStats: Array<{
-    date: string;
-    chatsInitiated: number;
-    messagesCount: number;
-  }>;
-}
-
-interface CV {
-  _id: string;
-  fileName: string;
-  content: string;
-  contentType: string;
-  createdAt: string;
-}
+import { ICV, ILink, ContentItem } from '@/types'
 
 const truncateText = (text: string, maxLength: number = 50) => {
   if (!text) return '';
@@ -40,8 +23,8 @@ const truncateText = (text: string, maxLength: number = 50) => {
 };
 
 export default function DashboardPage() {
-  const [links, setLinks] = useState<Link[]>([])
-  const [cvs, setCvs] = useState<CV[]>([])
+  const [links, setLinks] = useState<ILink[]>([])
+  const [cvs, setCvs] = useState<ContentItem[]>([])
   const router = useRouter()
 
   const fetchContent = async () => {
