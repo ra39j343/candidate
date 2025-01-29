@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { connectDB } from '@/lib/db'
 import { User } from '@/models/user'
 import bcrypt from 'bcrypt'
+import { JWT } from 'next-auth/jwt'
 
 const authOptions = {
   providers: [
@@ -58,7 +59,13 @@ const authOptions = {
     signIn: '/auth/login',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ 
+      token, 
+      user 
+    }: { 
+      token: JWT; 
+      user?: User 
+    }) {
       if (user) {
         token.role = user.role
         token.id = user.id
