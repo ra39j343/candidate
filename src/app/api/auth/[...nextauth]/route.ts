@@ -17,14 +17,24 @@ const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          console.log('Connecting to DB...')
+          console.log('Auth Debug: Starting authorization...')
+          console.log('Auth Debug: Credentials received:', { 
+            email: credentials?.email,
+            passwordLength: credentials?.password?.length
+          })
+          
           await connectDB()
-          console.log('DB Connected')
+          console.log('Auth Debug: DB Connected')
           
           const user = await User.findOne({ email: credentials?.email })
-          console.log('User search result:', user ? 'Found' : 'Not found')
+          console.log('Auth Debug: User search result:', { 
+            found: !!user,
+            email: user?.email,
+            role: user?.role
+          })
           
           if (!user) {
+            console.log('Auth Debug: No user found')
             return null
           }
 
@@ -32,12 +42,14 @@ const authOptions: AuthOptions = {
             credentials?.password || '',
             user.password
           )
-          console.log('Password validation:', isValid)
+          console.log('Auth Debug: Password validation:', isValid)
 
           if (!isValid) {
+            console.log('Auth Debug: Invalid password')
             return null
           }
 
+          console.log('Auth Debug: Login successful')
           return {
             id: user._id.toString(),
             email: user.email,
@@ -45,7 +57,7 @@ const authOptions: AuthOptions = {
             role: user.role
           }
         } catch (error) {
-          console.error('Auth error:', error)
+          console.error('Auth Debug: Error during authorization:', error)
           return null
         }
       }
@@ -91,7 +103,8 @@ const authOptions: AuthOptions = {
       }
       return session
     }
-  }
+  },
+  debug: true  // Enable NextAuth debug mode
 }
 
 const handler = NextAuth(authOptions)

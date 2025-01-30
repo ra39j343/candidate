@@ -8,17 +8,23 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env') })
 const BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
 async function testAdminLogin() {
+  const credentials = {
+    email: 'verdyanradik@gmail.com',
+    password: 'admin123'
+  }
+
   try {
-    console.log('Testing admin login...')
-    console.log('Using URL:', BASE_URL)
+    console.log('Debug: Starting login test...')
+    console.log('Debug: Using URL:', BASE_URL)
+    console.log('Debug: Attempting login with email:', credentials.email)
     
-    const response = await axios.post(`${BASE_URL}/api/auth/callback/credentials`, {
-      email: 'verdyanradik@gmail.com',
-      password: 'admin123'
-    })
-    console.log('Login successful:', response.data)
+    const response = await axios.post(`${BASE_URL}/api/auth/callback/credentials`, credentials)
+    console.log('Debug: Login response:', response.data)
   } catch (error) {
-    console.error('Login failed:', error.response?.data || error.message)
+    console.error('Debug: Login failed')
+    console.error('Debug: Error status:', error.response?.status)
+    console.error('Debug: Error data:', error.response?.data)
+    console.error('Debug: Full error:', error)
   }
 }
 
