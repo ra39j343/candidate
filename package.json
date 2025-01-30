@@ -29,6 +29,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
+    "dotenv": "^16.4.1",
     "framer-motion": "^11.18.0",
     "lucide-react": "^0.294.0",
     "mongoose": "^6.13.5",
