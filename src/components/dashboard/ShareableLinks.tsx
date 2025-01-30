@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Plus, Loader2, Trash2 } from "lucide-react"
 
 interface ShareableLinksProps {
-  links: any[]
+  links: IShareableLink[]
   onCreateLinkAction: () => Promise<void>
   onDeleteLinkAction: (linkId: string) => Promise<void>
 }
@@ -38,6 +38,13 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
       setIsDeleting(null)
     }
   }
+
+  const getTotalStats = (dailyStats: IDailyStat[]) => {
+    return dailyStats?.reduce((acc, stat) => ({
+      chats: acc.chats + (stat.chatsInitiated || 0),
+      messages: acc.messages + (stat.messagesCount || 0)
+    }), { chats: 0, messages: 0 });
+  };
 
   return (
     <Card>
@@ -78,7 +85,10 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
                       Created: {new Date(link.createdAt).toLocaleDateString()}
                     </Badge>
                     <Badge>
-                      {link.dailyStats?.reduce((sum: number, stat: any) => sum + (stat.chatsInitiated || 0), 0)} chats
+                      {getTotalStats(link.dailyStats).chats} chats
+                    </Badge>
+                    <Badge variant="secondary">
+                      {getTotalStats(link.dailyStats).messages} messages
                     </Badge>
                   </div>
                 </div>

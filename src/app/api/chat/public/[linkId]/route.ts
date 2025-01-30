@@ -17,6 +17,8 @@ export async function POST(
   try {
     await connectDB()
 
+    const { message, isNewChat = false } = await req.json()
+    
     // Find the link and verify it's active
     const link = await ShareableLink.findOne({
       id: params.linkId,
@@ -30,9 +32,7 @@ export async function POST(
       )
     }
 
-    const { message } = await req.json()
-    
-    // Get AI response using the link's userId
+    // Get AI response
     const response = await getAIResponse(link.userId, message)
 
     // Update daily stats
@@ -40,16 +40,21 @@ export async function POST(
     today.setHours(0, 0, 0, 0)
 
     const statsIndex = link.dailyStats.findIndex(
-      (stat: DailyStat) => new Date(stat.date).getTime() === today.getTime()
+      stat => new Date(stat.date).getTime() === today.getTime()
     )
 
     if (statsIndex === -1) {
+      // Create new daily stat
       link.dailyStats.push({
         date: today,
-        chatsInitiated: 1,
+        chatsInitiated: isNewChat ? 1 : 0,
         messagesCount: 1
       })
     } else {
+      // Update existing daily stat
+      if (isNewChat) {
+        link.dailyStats[statsIndex].chatsInitiated++
+      }
       link.dailyStats[statsIndex].messagesCount++
     }
 
