@@ -7,17 +7,19 @@ export function middleware(request: NextRequest) {
 
   // Create a list of paths that should be public
   const publicPaths = [
-    '/chat/public/',           // Public chat UI
-    '/api/chat/public/',       // Public chat API
-    '/auth/',                  // Auth pages
-    '/api/auth/',              // Auth API
-    '/_next/',                 // Next.js assets
-    '/static/',                // Static files
-    '/favicon.ico'             // Favicon
+    '/chat/public',           // Public chat UI (without trailing slash)
+    '/api/chat/public',       // Public chat API (without trailing slash)
+    '/auth',                  // Auth pages
+    '/api/auth',              // Auth API
+    '/_next',                 // Next.js assets
+    '/static',                // Static files
+    '/favicon.ico'            // Favicon
   ]
 
   // Check if the current path starts with any of the public paths
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path))
+  const isPublicPath = publicPaths.some(path => 
+    pathname === path || pathname.startsWith(`${path}/`)
+  )
   
   if (isPublicPath) {
     console.log('Public path accessed:', pathname)
