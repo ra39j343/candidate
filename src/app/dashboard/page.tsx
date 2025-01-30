@@ -14,6 +14,7 @@ import FileUpload from '@/components/dashboard/FileUpload'
 import TextUpload from '@/components/dashboard/TextUpload'
 import { useRouter } from 'next/navigation'
 import { ICV, ILink, ContentItem } from '@/types'
+import { IShareableLink } from '@/models/ShareableLink'
 
 const truncateText = (text: string, maxLength: number = 50) => {
   if (!text) return '';
@@ -23,7 +24,7 @@ const truncateText = (text: string, maxLength: number = 50) => {
 };
 
 export default function DashboardPage() {
-  const [links, setLinks] = useState<ILink[]>([])
+  const [links, setLinks] = useState<IShareableLink[]>([])
   const [cvs, setCvs] = useState<ContentItem[]>([])
   const router = useRouter()
 

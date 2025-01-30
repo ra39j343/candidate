@@ -1,3 +1,5 @@
+import { IShareableLink } from '@/models/ShareableLink'
+
 // API Response Types
 export interface APIResponse<T> {
   success: boolean;
@@ -15,15 +17,8 @@ export interface ICV {
   createdAt: string;
 }
 
-export interface ILink {
-  id: string;
-  createdAt: string;
-  dailyStats: Array<{
-    date: string;
-    chatsInitiated: number;
-    messagesCount: number;
-  }>;
-}
+// Update ILink to extend IShareableLink
+export type ILink = Pick<IShareableLink, 'id' | 'createdAt' | 'dailyStats'>;
 
 // Common type for content items in dashboard
 export interface ContentItem {
