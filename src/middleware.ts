@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   // Explicitly check for public chat routes first
-  if (request.nextUrl.pathname.startsWith('/chat/public/') || 
+  if (request.nextUrl.pathname.startsWith('/chat/public/') ||
       request.nextUrl.pathname.startsWith('/api/chat/public/')) {
     console.log('Public chat route accessed:', request.nextUrl.pathname) // Debug log
     return NextResponse.next()
@@ -19,7 +19,7 @@ export function middleware(request: NextRequest) {
   // Check for session token (both secure and non-secure versions)
   const token = request.cookies.get('next-auth.session-token') ||
                 request.cookies.get('__Secure-next-auth.session-token')
-                
+
   if (!token) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
@@ -30,11 +30,12 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Match all paths except:
+     * - api/chat/public
+     * - chat/public
+     * - _next
+     * - static files
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!chat/public|api/chat/public|_next/static|_next/image|favicon.ico).*)',
   ],
 } 
