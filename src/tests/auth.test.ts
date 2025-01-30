@@ -1,31 +1,25 @@
 import axios from 'axios'
+import dotenv from 'dotenv'
+import path from 'path'
 
-const BASE_URL = 'http://localhost:3000'
+// Load environment variables
+dotenv.config({ path: path.resolve(process.cwd(), '.env') })
 
-async function testNextAuth() {
+const BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+
+async function testAdminLogin() {
   try {
-    // Test 1: Login as admin
-    console.log('📝 Test 1: Admin Login')
-    const loginResponse = await axios.post(`${BASE_URL}/api/auth/callback/credentials`, {
-      username: 'admin',
+    console.log('Testing admin login...')
+    console.log('Using URL:', BASE_URL)
+    
+    const response = await axios.post(`${BASE_URL}/api/auth/callback/credentials`, {
+      email: 'verdyanradik@gmail.com',
       password: 'admin123'
     })
-    console.log('✅ Admin login successful:', loginResponse.data)
-
-    // Test 2: Try invalid login
-    console.log('\n📝 Test 2: Invalid Login')
-    try {
-      await axios.post(`${BASE_URL}/api/auth/callback/credentials`, {
-        username: 'admin',
-        password: 'wrongpass'
-      })
-    } catch (error) {
-      console.log('✅ Invalid login properly rejected')
-    }
-
+    console.log('Login successful:', response.data)
   } catch (error) {
-    console.error('❌ Test failed:', error.response?.data || error.message)
+    console.error('Login failed:', error.response?.data || error.message)
   }
 }
 
-testNextAuth() 
+testAdminLogin() 

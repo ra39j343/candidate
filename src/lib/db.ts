@@ -1,31 +1,31 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/candidate-db';
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable');
-}
-
-const options = {
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-};
+let isConnected = false;
 
 export async function connectDB() {
+  if (isConnected) {
+    console.log('Using existing database connection');
+    return;
+  }
+
   try {
-    if (mongoose.connection.readyState === 1) {
-      console.log('Using existing MongoDB connection');
-      return mongoose.connection;
+    console.log('MongoDB URI:', process.env.MONGODB_URI); // Debug log
+    
+    if (!process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI is not defined');
     }
 
-    await mongoose.connect(MONGODB_URI, options);
-    console.log('Connected to MongoDB Docker container');
-    
-    mongoose.connection.on('error', err => {
-      console.error('MongoDB connection error:', err);
-    });
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      retryWrites: true,
+      w: 'majority',
+      connectTimeoutMS: 10000, // 10 seconds
+      socketTimeoutMS: 45000,  // 45 seconds
+    } as mongoose.ConnectOptions);
 
-    return mongoose.connection;
+    isConnected = true;
+    console.log('New database connection established');
   } catch (error) {
     console.error('MongoDB connection error:', error);
     throw error;

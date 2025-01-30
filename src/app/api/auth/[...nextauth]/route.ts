@@ -1,56 +1,52 @@
 import NextAuth, { AuthOptions, SessionStrategy } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { connectDB } from '@/lib/db'
-import { User as IUser } from '@/models/user'
+import { User } from '@/models/user'
 import bcrypt from 'bcrypt'
 import { JWT } from 'next-auth/jwt'
-import { User } from '@/models/user'
 import { DefaultUser } from 'next-auth'
 import { Session } from 'next-auth'
 
 const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      name: 'Credentials',
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
-          throw new Error('Invalid credentials')
-        }
+        try {
+          console.log('Connecting to DB...')
+          await connectDB()
+          console.log('DB Connected')
+          
+          const user = await User.findOne({ email: credentials?.email })
+          console.log('User search result:', user ? 'Found' : 'Not found')
+          
+          if (!user) {
+            return null
+          }
 
-        await connectDB()
+          const isValid = await bcrypt.compare(
+            credentials?.password || '',
+            user.password
+          )
+          console.log('Password validation:', isValid)
 
-        const user = await User.findOne({ username: credentials.username })
-        if (!user) {
-          throw new Error('Invalid credentials')
-        }
+          if (!isValid) {
+            return null
+          }
 
-        // For admin user with plain text password
-        if (user.username === 'admin' && credentials.password === user.password) {
           return {
             id: user._id.toString(),
-            username: user.username,
-            role: user.role || 'admin'
+            email: user.email,
+            name: user.name,
+            role: user.role
           }
-        }
-
-        // For other users with hashed passwords
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
-
-        if (!isPasswordValid) {
-          throw new Error('Invalid credentials')
-        }
-
-        return {
-          id: user._id.toString(),
-          username: user.username,
-          role: user.role
+        } catch (error) {
+          console.error('Auth error:', error)
+          return null
         }
       }
     })
