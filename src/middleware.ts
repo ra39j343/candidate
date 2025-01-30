@@ -5,24 +5,28 @@ import { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Create a list of paths that should be public
+  // Debug log to see what path is being accessed
+  console.log('Middleware processing path:', pathname)
+
+  // Check if this is a public chat route (either UI or API)
+  if (pathname.includes('/chat/public/') || pathname.includes('/api/chat/public/')) {
+    console.log('Public chat route detected:', pathname)
+    return NextResponse.next()
+  }
+
+  // Other public paths that don't need authentication
   const publicPaths = [
-    '/chat/public',           // Public chat UI (without trailing slash)
-    '/api/chat/public',       // Public chat API (without trailing slash)
-    '/auth',                  // Auth pages
-    '/api/auth',              // Auth API
-    '/_next',                 // Next.js assets
-    '/static',                // Static files
-    '/favicon.ico'            // Favicon
+    '/auth',
+    '/api/auth',
+    '/_next',
+    '/static',
+    '/favicon.ico'
   ]
 
   // Check if the current path starts with any of the public paths
-  const isPublicPath = publicPaths.some(path => 
-    pathname === path || pathname.startsWith(`${path}/`)
-  )
+  const isPublicPath = publicPaths.some(path => pathname.startsWith(path))
   
   if (isPublicPath) {
-    console.log('Public path accessed:', pathname)
     return NextResponse.next()
   }
 
@@ -31,7 +35,7 @@ export function middleware(request: NextRequest) {
                 request.cookies.get('__Secure-next-auth.session-token')
                 
   if (!token) {
-    console.log('No token found for path:', pathname)
+    console.log('Authentication required for:', pathname)
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
@@ -40,6 +44,9 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    /*
+     * Match all paths except static files
+     */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 } 
