@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Plus, Loader2, Trash2 } from "lucide-react"
+import { IShareableLink, IDailyStat } from '@/models/ShareableLink'
 
 interface ShareableLinksProps {
   links: IShareableLink[]
