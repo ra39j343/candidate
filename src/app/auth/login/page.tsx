@@ -16,6 +16,7 @@ export default function LoginPage() {
       const result = await signIn('credentials', {
         email,
         password,
+        callbackUrl: '/dashboard',
         redirect: false
       })
 
@@ -24,8 +25,11 @@ export default function LoginPage() {
         return
       }
 
-      router.push('/dashboard')
-      router.refresh()
+      if (result?.url) {
+        router.push(result.url)
+      } else {
+        router.push('/dashboard')
+      }
     } catch (error) {
       setError('An error occurred during login')
     }
