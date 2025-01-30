@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
-import { ShareableLink } from '@/models/ShareableLink'
+import { ShareableLink, IDailyStat } from '@/models/ShareableLink'
 import { getAIResponse } from '@/lib/aiService'
 import { handleError } from '@/utils/handleErrors'
 
@@ -40,7 +40,7 @@ export async function POST(
     today.setHours(0, 0, 0, 0)
 
     const statsIndex = link.dailyStats.findIndex(
-      stat => new Date(stat.date).getTime() === today.getTime()
+      (stat: IDailyStat) => new Date(stat.date).getTime() === today.getTime()
     )
 
     if (statsIndex === -1) {
