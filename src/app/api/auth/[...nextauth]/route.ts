@@ -34,26 +34,24 @@ const authOptions: AuthOptions = {
           })))
           
           const user = await User.findOne({ email: credentials?.email })
-          console.log('Auth Debug: User search result:', { 
-            searchEmail: credentials?.email,
-            found: !!user,
-            userData: user ? {
-              email: user.email,
-              role: user.role,
-              id: user._id.toString()
-            } : null
-          })
+          console.log('Auth Debug: User found:', !!user)
           
           if (!user) {
             console.log('Auth Debug: No user found')
             return null
           }
 
+          console.log('Auth Debug: Password check:', {
+            providedPassword: credentials?.password,
+            storedHashLength: user.password.length,
+            storedHashStart: user.password.substring(0, 10) + '...'
+          })
+
           const isValid = await bcrypt.compare(
             credentials?.password || '',
             user.password
           )
-          console.log('Auth Debug: Password validation:', isValid)
+          console.log('Auth Debug: Password validation result:', isValid)
 
           if (!isValid) {
             console.log('Auth Debug: Invalid password')

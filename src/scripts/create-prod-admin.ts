@@ -3,6 +3,7 @@ import path from 'path'
 import { connectDB } from '@/lib/db'
 import { User } from '@/models/user'
 import bcrypt from 'bcrypt'
+import mongoose from 'mongoose'
 
 // Load environment variables from the root .env file
 dotenv.config({ path: path.resolve(process.cwd(), '.env') })
@@ -26,24 +27,38 @@ async function createProdAdmin() {
     // Check if admin exists
     const existingAdmin = await User.findOne({ email })
     if (existingAdmin) {
-      console.log('Admin already exists')
-      process.exit(0)
+      console.log('Admin exists, updating password...')
+      
+      // Update password
+      const hashedPassword = await bcrypt.hash(password, 10)
+      await User.updateOne(
+        { email },
+        { 
+          $set: { 
+            password: hashedPassword,
+            role: 'admin',
+            name: 'Admin User'
+          }
+        }
+      )
+      console.log('Admin password updated successfully')
+    } else {
+      // Create new admin user
+      const hashedPassword = await bcrypt.hash(password, 10)
+      const admin = new User({
+        email,
+        password: hashedPassword,
+        role: 'admin',
+        name: 'Admin User'
+      })
+      await admin.save()
+      console.log('Admin user created successfully')
     }
-
-    // Create admin user
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const admin = new User({
-      email,
-      password: hashedPassword,
-      role: 'admin',
-      name: 'Admin User'
-    })
-
-    await admin.save()
-    console.log('Admin user created successfully')
   } catch (error) {
     console.error('Error:', error)
-    process.exit(1)
+  } finally {
+    await mongoose.connection.close()
+    process.exit(0)
   }
 }
 
