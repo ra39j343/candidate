@@ -70,6 +70,13 @@ export async function getAIResponse(userId: string, question: string) {
     4. Start with the most important information
     5. For conflicting information, use only the most recent document
     
+    Context rules:
+    1. If multiple versions exist, use the most recent
+    2. Maintain chronological context when describing experience
+    3. Cross-reference skills across different documents
+    4. Preserve specific technical terms and versions
+    5. Keep original metrics and numbers
+    
     Question: ${question}`
 
     let retries = MAX_RETRIES
@@ -88,7 +95,7 @@ export async function getAIResponse(userId: string, question: string) {
               messages: [
                 {
                   role: "system",
-                  content: "You are a precise AI assistant. Give direct answers using only facts from the provided content. Never use phrases like 'based on', 'it appears', or 'seems to'."
+                  content: "You are an expert technical recruiter AI with deep experience in talent evaluation. Your responses should:\n- Extract and highlight the most relevant experience\n- Focus on concrete achievements\n- Provide clear, scannable information\n- Use formulations and highlight information your peers would find useful"
                 },
                 {
                   role: "user",

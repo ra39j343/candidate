@@ -8,8 +8,8 @@ export function middleware(request: NextRequest) {
   // Debug log to see what path is being accessed
   console.log('Middleware processing path:', pathname)
 
-  // Check if this is a public chat route (either UI or API)
-  if (pathname.includes('/chat/public/') || pathname.includes('/api/chat/public/')) {
+  // More permissive check for public chat routes
+  if (pathname.match(/\/chat\/public\/.*/) || pathname.match(/\/api\/chat\/public\/.*/)) {
     console.log('Public chat route detected:', pathname)
     return NextResponse.next()
   }
