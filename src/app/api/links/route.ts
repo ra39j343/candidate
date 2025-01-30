@@ -9,18 +9,17 @@ import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: authOptions.secret })
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    if (!token?.sub) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await connectDB();
+    await connectDB()
     
-    // Get links directly from ShareableLink model
     const links = await ShareableLink.find({ 
-      userId: token.id,
+      userId: token.sub,
       isActive: true 
-    });
+    })
 
     console.log('Found links for user:', links); // Debug log
 

@@ -10,8 +10,8 @@ import { authOptions } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: authOptions.secret })
-    if (!token) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    if (!token?.sub) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     
     // Save CV to the database
     const newCV = new CV({
-      userId: token.id,
+      userId: token.sub,
       filename: file.name,
       content,
       contentType: file.type,

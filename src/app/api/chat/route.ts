@@ -8,15 +8,15 @@ import { authOptions } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: authOptions.secret });
-    if (!token) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token?.sub) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await connectDB();
 
     const chat = new Chat({
-      userId: token.id,
+      userId: token.sub,
       settings: {
         modelType: 'flan-t5-base',
         contextLength: 2048,

@@ -7,8 +7,8 @@ import { authOptions } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: authOptions.secret })
-    if (!token) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    if (!token?.sub) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
 
     await connectDB()
     
-    // Create new text content
+    // Create new text content with explicit userId from token.sub
     const newContent = new Content({
-      userId: token.id,
+      userId: token.sub,
       type: 'text',
       content: content.toString(),
       fileName: `Text Content ${new Date().toLocaleDateString()}`,

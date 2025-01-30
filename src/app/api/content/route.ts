@@ -9,15 +9,15 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: authOptions.secret })
-    if (!token) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    if (!token?.sub) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     await connectDB()
     
     // Fetch all content for the user
-    const content = await Content.find({ userId: token.id })
+    const content = await Content.find({ userId: token.sub })
       .sort({ createdAt: -1 })
       .select('type fileName content createdAt')
     

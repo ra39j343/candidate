@@ -10,8 +10,8 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = await getToken({ req, secret: authOptions.secret })
-    if (!token) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    if (!token?.sub) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -22,7 +22,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Content not found' }, { status: 404 })
     }
 
-    if (content.userId.toString() !== token.id) {
+    if (content.userId.toString() !== token.sub) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

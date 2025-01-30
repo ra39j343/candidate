@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     
     // Create new file content
     const newContent = new Content({
-      userId: token.id,
+      userId: token.sub,
       type: 'file',
       content: fileContent,
       fileName: file.name,
