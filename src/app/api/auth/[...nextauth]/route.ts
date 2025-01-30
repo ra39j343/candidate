@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 import { JWT } from 'next-auth/jwt'
 import { DefaultUser } from 'next-auth'
 import { Session } from 'next-auth'
+import mongoose from 'mongoose'
 
 const authOptions: AuthOptions = {
   providers: [
@@ -18,19 +19,29 @@ const authOptions: AuthOptions = {
       async authorize(credentials) {
         try {
           console.log('Auth Debug: Starting authorization...')
-          console.log('Auth Debug: Credentials received:', { 
-            email: credentials?.email,
-            passwordLength: credentials?.password?.length
-          })
+          console.log('Auth Debug: MongoDB URI:', process.env.MONGODB_URI?.substring(0, 20) + '...')
           
           await connectDB()
           console.log('Auth Debug: DB Connected')
+          console.log('Auth Debug: Current connection state:', mongoose.connection.readyState)
+          
+          // Log all users in the database
+          const allUsers = await User.find({})
+          console.log('Auth Debug: All users in DB:', allUsers.map(u => ({
+            email: u.email,
+            role: u.role,
+            id: u._id.toString()
+          })))
           
           const user = await User.findOne({ email: credentials?.email })
           console.log('Auth Debug: User search result:', { 
+            searchEmail: credentials?.email,
             found: !!user,
-            email: user?.email,
-            role: user?.role
+            userData: user ? {
+              email: user.email,
+              role: user.role,
+              id: user._id.toString()
+            } : null
           })
           
           if (!user) {
@@ -68,6 +79,7 @@ const authOptions: AuthOptions = {
   },
   pages: {
     signIn: '/auth/login',
+    error: '/auth/login'
   },
   callbacks: {
     async jwt({ 

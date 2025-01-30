@@ -8,7 +8,8 @@
     "check-admin": "tsx src/scripts/checkAdmin.ts",
     "create-admin": "tsx src/scripts/createAdmin.ts",
     "create-prod-admin": "tsx src/scripts/create-prod-admin.ts",
-    "test-login": "tsx src/tests/auth.test.ts"
+    "test-login": "tsx src/tests/auth.test.ts",
+    "verify-db": "tsx src/scripts/verify-db.ts"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.4",
