@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions, SessionStrategy } from 'next-auth'
+import NextAuth, { AuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { connectDB } from '@/lib/db'
 import { User } from '@/models/user'
@@ -8,7 +8,7 @@ import { DefaultUser } from 'next-auth'
 import { Session } from 'next-auth'
 import mongoose from 'mongoose'
 
-const authOptions: AuthOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -72,49 +72,28 @@ const authOptions: AuthOptions = {
       }
     })
   ],
-  session: {
-    strategy: 'jwt' as SessionStrategy
-  },
   pages: {
     signIn: '/auth/login',
     error: '/auth/login'
   },
   callbacks: {
-    async jwt({ 
-      token, 
-      user 
-    }: { 
-      token: JWT; 
-      user?: DefaultUser & { 
-        role?: string;
-        id: string;
-      }
-    }) {
+    async jwt({ token, user }) {
       if (user) {
         token.role = user.role
-        token.id = user.id
       }
       return token
     },
-    async session({ 
-      session, 
-      token 
-    }: { 
-      session: Session;
-      token: JWT & {
-        role?: string;
-        username?: string;
-      }
-    }) {
+    async session({ session, token }) {
       if (session?.user) {
-        session.user.role = token.role as string
-        session.user.id = token.id as string
-        session.user.name = token.username as string
+        (session.user as any).role = token.role
       }
       return session
     }
   },
-  debug: true  // Enable NextAuth debug mode
+  session: {
+    strategy: "jwt",
+  },
+  debug: process.env.NODE_ENV === 'development',
 }
 
 const handler = NextAuth(authOptions)
