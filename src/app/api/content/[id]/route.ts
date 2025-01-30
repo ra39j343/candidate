@@ -3,13 +3,14 @@ import { connectDB } from '@/lib/db'
 import { Content } from '@/models/content'
 import { getToken } from 'next-auth/jwt'
 import { handleError } from '@/utils/handleErrors'
+import { authOptions } from '@/lib/auth'
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = await getToken({ req })
+    const token = await getToken({ req, secret: authOptions.secret })
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

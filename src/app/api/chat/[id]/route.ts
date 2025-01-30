@@ -7,13 +7,14 @@ import { Message } from '@/models/Message';
 import { getAIResponse } from '@/lib/aiService';
 import { chatMessageSchema } from '@/validation/schemas';
 import { handleError } from '@/utils/handleErrors';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = await getToken({ req });
+    const token = await getToken({ req, secret: authOptions.secret });
     if (!token?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

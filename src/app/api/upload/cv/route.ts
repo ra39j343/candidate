@@ -6,10 +6,11 @@ import { Chat } from '@/models/chat'
 import { cvUploadSchema } from '@/validation/schemas'
 import { handleError } from '@/utils/handleErrors'
 import * as pdfjs from 'pdfjs-dist'
+import { authOptions } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req })
+    const token = await getToken({ req, secret: authOptions.secret })
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { connectDB } from '@/lib/db'
 import { ShareableLink } from '@/models/ShareableLink'
+import { authOptions } from '@/lib/auth'
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { linkId: string } }
 ) {
   try {
-    const token = await getToken({ req })
+    const token = await getToken({ req, secret: authOptions.secret })
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

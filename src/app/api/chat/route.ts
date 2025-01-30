@@ -4,10 +4,11 @@ import { getToken } from 'next-auth/jwt';
 import { connectDB } from '@/lib/db';
 import { Chat } from '@/models/chat';
 import { handleError } from '@/utils/handleErrors';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req });
+    const token = await getToken({ req, secret: authOptions.secret });
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
