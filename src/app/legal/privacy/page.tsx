@@ -133,12 +133,10 @@ export default function PrivacyPolicy() {
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-900">9. Contact Information</h2>
           <p className="leading-relaxed">
-            For any privacy-related queries or to exercise your rights, contact our Data Protection Officer at:
+            For any privacy-related queries contact:
           </p>
           <div className="pl-4 space-y-2">
-            <p>Email: dpo@[your-domain].com</p>
-            <p>Address: [Your Company Address]</p>
-            <p>Phone: [Contact Number]</p>
+            <p>Email: verdyanradik@gmail.com</p>
           </div>
         </div>
       </section>

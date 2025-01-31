@@ -199,9 +199,7 @@ export default function TermsOfService() {
         <h2 className="text-2xl font-semibold text-gray-900">10. Contact Information</h2>
         <p className="leading-relaxed">For any questions about these terms, contact us at:</p>
         <div className="pl-4 space-y-2">
-          <p>Email: legal@[your-domain].com</p>
-          <p>Address: [Your Company Address]</p>
-          <p>Phone: [Contact Number]</p>
+          <p>Email: verdyanradik@gmail.com</p>
         </div>
       </div>
 

@@ -239,7 +239,7 @@ export default function DashboardPage() {
   }
 
     return (
-    <div className="container mx-auto p-6 border-2 border-blue-500">
+    <div className="container mx-auto py-4 px-6">
       <div className="flex justify-between items-center mb-8">
         <div className="space-y-1">
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">

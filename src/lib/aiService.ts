@@ -79,43 +79,58 @@ export async function getAIResponse(userId: string, question: string) {
     
     Question: ${question}`
 
+    // Add this helper function at the top of the file
+    function stripMarkdown(text: string): string {
+      return text.replace(/\*\*/g, '');
+    }
+
     let retries = MAX_RETRIES
     while (retries > 0) {
       try {
+        console.log(`Attempt ${MAX_RETRIES-retries+1}/${MAX_RETRIES} to get AI response`)
+        
+        // Log the request details (without the full API key)
+        console.log('Request URL:', 'https://api.minimaxi.chat/v1/text/chatcompletion_v2')
+        console.log('API Key format:', process.env.MINIMAX_API_KEY.substring(0, 20) + '...')
+        
         const response = await fetch(
           'https://api.minimaxi.chat/v1/text/chatcompletion_v2',
           {
             headers: {
               "Authorization": `Bearer ${process.env.MINIMAX_API_KEY}`,
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Accept": "application/json"
             },
             method: "POST",
             body: JSON.stringify({
-              model: "MiniMax-Text-01",
+              model: "MiniMax-Text-01", // Using the model with larger context window
               messages: [
                 {
                   role: "system",
-                  content: "You are an expert technical recruiter AI with deep experience in talent evaluation. Your responses should:\n- Extract and highlight the most relevant experience\n- Focus on concrete achievements\n- Provide clear, scannable information\n- Use formulations and highlight information your peers would find useful"
+                  content: "You are a helpful AI assistant helping recruiters understand candidate information."
                 },
                 {
                   role: "user",
                   content: enhancedPrompt
                 }
               ],
-              temperature: 0.2,
-              max_tokens: 150,
-              top_p: 0.8
+              temperature: 0.7,
+              max_tokens: 500
             })
           }
         );
 
         const data = await response.json();
-        
+        console.log('API Response:', data);
+
+        // Check for API error response
         if (data.base_resp && data.base_resp.status_code !== 0) {
-          throw new Error(`API Error: ${data.base_resp.status_msg}`);
+          throw new Error(`API Error: ${data.base_resp.status_msg} (code: ${data.base_resp.status_code})`);
         }
 
-        if (!data.choices?.[0]?.message?.content) {
+        // Only check response format if we don't have an error
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+          console.error('Unexpected API response format:', data);
           throw new Error('Invalid response format from API');
         }
 
@@ -129,6 +144,6 @@ export async function getAIResponse(userId: string, question: string) {
     }
   } catch (error) {
     console.error('Error in getAIResponse:', error)
-    return `I apologize, but I'm having trouble accessing the information right now.`
+    return `I apologize, but I'm having trouble accessing the information right now. Please try again in a moment.`
   }
 }

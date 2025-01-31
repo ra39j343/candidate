@@ -132,9 +132,7 @@ export default function CookiePolicy() {
           <h2 className="text-2xl font-semibold text-gray-900">8. Contact Information</h2>
           <p className="leading-relaxed">For questions about our cookie practices, contact us at:</p>
           <div className="pl-4 space-y-2">
-            <p>Email: privacy@[your-domain].com</p>
-            <p>Address: [Your Company Address]</p>
-            <p>Phone: [Contact Number]</p>
+            <p>Email: verdyanradik@gmail.com</p>
           </div>
         </div>
       </section>

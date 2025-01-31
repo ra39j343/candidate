@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div className="flex-grow flex items-center justify-center">
         <div className="max-w-md w-full space-y-8 p-8">
           <div>
-            <h2 className="text-center text-3xl font-bold">Sign in</h2>
+            <h2 className="text-center text-3xl font-bold">Welcome to EchoProfile</h2>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {error && (
