@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { FileText, Trash2, Plus, Clock, Link2, Eye } from "lucide-react"
+import { FileText, Trash2, Plus, Clock, Link2, Eye, LogOut } from "lucide-react"
 import Link from 'next/link'
 import { motion, AnimatePresence } from "framer-motion"
 import ShareableLinks from '@/components/dashboard/ShareableLinks'
@@ -15,6 +15,7 @@ import TextUpload from '@/components/dashboard/TextUpload'
 import { useRouter } from 'next/navigation'
 import { ICV, ILink, ContentItem } from '@/types'
 import { IShareableLink } from '@/models/ShareableLink'
+import { useSession, signOut } from 'next-auth/react'
 
 const truncateText = (text: string, maxLength: number = 50) => {
   if (!text) return '';
@@ -27,6 +28,7 @@ export default function DashboardPage() {
   const [links, setLinks] = useState<IShareableLink[]>([])
   const [cvs, setCvs] = useState<ContentItem[]>([])
   const router = useRouter()
+  const session = useSession()
 
   const fetchContent = async () => {
     try {
@@ -104,6 +106,10 @@ export default function DashboardPage() {
     }
   }
 
+  const handleLogout = async () => {
+    await signOut({ redirect: true, callbackUrl: '/auth/login' })
+  }
+
   return (
     <div className="container mx-auto p-6 border-2 border-blue-500">
       <div className="flex justify-between items-center mb-8">
@@ -115,12 +121,22 @@ export default function DashboardPage() {
             Manage your CV content and chat interactions
           </p>
         </div>
-        <Link href="/chat/test">
-          <Button className="shadow-lg hover:shadow-xl transition-all">
-            <Plus className="mr-2 h-4 w-4" />
-            Test AI Chat
+        <div className="flex items-center gap-2">
+          <Link href="/chat/test">
+            <Button className="shadow-lg hover:shadow-xl transition-all">
+              <Plus className="mr-2 h-4 w-4" />
+              Test AI Chat
+            </Button>
+          </Link>
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+            className="shadow-lg hover:shadow-xl transition-all"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
           </Button>
-        </Link>
+        </div>
       </div>
 
       <Tabs defaultValue="content" className="space-y-8">

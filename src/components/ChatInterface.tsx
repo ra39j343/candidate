@@ -9,6 +9,7 @@ import { CheckCircle2 } from "lucide-react"
 import { Command, CommandInput } from "@/components/ui/command"
 import { Send, Loader2 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import Link from 'next/link'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -104,6 +105,24 @@ export default function ChatInterface({
                 💬
               </div>
               <p>No messages yet. Start by asking a question!</p>
+              
+              {/* Registration CTA for public chats */}
+              {isPublic && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg text-center">
+                  <p className="text-blue-700 font-medium mb-2">
+                    Are you a recruiter or hiring manager?
+                  </p>
+                  <p className="text-sm text-blue-600 mb-3">
+                    Create your own AI assistant for candidate evaluation
+                  </p>
+                  <Link 
+                    href="/auth/register" 
+                    className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Sign up for free
+                  </Link>
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -150,6 +169,24 @@ export default function ChatInterface({
                 </div>
               </div>
             ))}
+            
+            {/* Registration CTA after a few messages */}
+            {isPublic && messages.length >= 3 && (
+              <div className="my-4 p-4 bg-blue-50 rounded-lg text-center">
+                <p className="text-blue-700 font-medium mb-2">
+                  Like this AI assistant?
+                </p>
+                <p className="text-sm text-blue-600 mb-3">
+                  Create your own for evaluating candidates
+                </p>
+                <Link 
+                  href="/auth/register" 
+                  className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Sign up for free
+                </Link>
+              </div>
+            )}
             {isLoading && <TypingIndicator />}
           </>
         )}
