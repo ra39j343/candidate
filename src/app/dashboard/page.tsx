@@ -16,6 +16,17 @@ import { useRouter } from 'next/navigation'
 import { ICV, ILink, ContentItem } from '@/types'
 import { IShareableLink } from '@/models/ShareableLink'
 import { useSession, signOut } from 'next-auth/react'
+import { useToast } from "@/components/ui/use-toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 const truncateText = (text: string, maxLength: number = 50) => {
   if (!text) return '';
@@ -28,17 +39,45 @@ export default function DashboardPage() {
   const [links, setLinks] = useState<IShareableLink[]>([])
   const [cvs, setCvs] = useState<ContentItem[]>([])
   const router = useRouter()
-  const session = useSession()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState('content')
+  const [isUploading, setIsUploading] = useState(false)
+  const [dragActive, setDragActive] = useState(false)
+  const { toast } = useToast()
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('tab') === 'links' && params.get('from') === 'test') {
+      setActiveTab('links')
+    }
+  }, [])
 
   const fetchContent = async () => {
     try {
-      const response = await fetch('/api/content')
+      console.log('Fetching content...')
+      const response = await fetch('/api/content', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       if (response.ok) {
         const data = await response.json()
-        setCvs(data.cvs)
+        console.log('Raw content data:', data)
+        const mappedCvs = data.cvs.map((cv: any) => ({
+          ...cv,
+          type: cv.mimeType?.includes('pdf') ? 'PDF' : 'TEXT',
+          filename: cv.fileName || cv.filename
+        }))
+        console.log('Mapped CVs:', mappedCvs)
+        setCvs(mappedCvs)
+        console.log('CVs state updated:', mappedCvs.length, 'items')
+      } else {
+        console.error('Error fetching content:', await response.text())
       }
     } catch (error) {
-      console.error('Error fetching content:', error)
+      console.error('Error in fetchContent:', error)
     }
   }
 
@@ -55,8 +94,11 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
-    fetchLinks()
     fetchContent()
+    fetchLinks()
+
+    const intervalId = setInterval(fetchContent, 5000)
+    return () => clearInterval(intervalId)
   }, [])
 
   const handleCreateLink = async () => {
@@ -94,15 +136,51 @@ export default function DashboardPage() {
   }
 
   const handleDeleteCV = async (cvId: string) => {
+    console.log('Attempting to delete CV:', cvId)
+    setPendingDeleteId(cvId)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return
+    console.log('Confirming delete for CV:', pendingDeleteId)
+
     try {
-      const response = await fetch(`/api/content/${cvId}`, {
-        method: 'DELETE'
+      const response = await fetch(`/api/content/${pendingDeleteId}`, {
+        method: 'DELETE',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       })
+      console.log('Delete response status:', response.status)
+      
       if (response.ok) {
-        setCvs(cvs.filter(cv => cv._id !== cvId))
+        const data = await response.json()
+        console.log('Delete response:', data)
+        setCvs(cvs.filter(cv => cv._id !== pendingDeleteId))
+        setDeleteDialogOpen(false)
+        setPendingDeleteId(null)
+        toast({
+          title: "Success",
+          description: "CV deleted successfully",
+        })
+      } else {
+        const errorData = await response.text()
+        console.error('Delete response error:', errorData)
+        toast({
+          title: "Error",
+          description: "Failed to delete CV",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error('Error deleting CV:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete CV",
+        variant: "destructive",
+      })
     }
   }
 
@@ -110,7 +188,57 @@ export default function DashboardPage() {
     await signOut({ redirect: true, callbackUrl: '/auth/login' })
   }
 
-  return (
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setDragActive(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setDragActive(false)
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setDragActive(false)
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleUpload(e.dataTransfer.files[0])
+    }
+  }
+
+  const handleUpload = async (file: File) => {
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch('/api/upload/cv', {
+        method: 'POST',
+        body: formData
+      })
+      const data = await res.json()
+      
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "CV uploaded successfully",
+        })
+        await fetchContent()
+      } else {
+        throw new Error(data.error)
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast({
+        title: "Error",
+        description: "Failed to upload CV",
+        variant: "destructive",
+      })
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+    return (
     <div className="container mx-auto p-6 border-2 border-blue-500">
       <div className="flex justify-between items-center mb-8">
         <div className="space-y-1">
@@ -118,7 +246,7 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-muted-foreground">
-            Manage your CV content and chat interactions
+          Add information about yourself, create and share links to AI-powered chats. 
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -139,13 +267,13 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="content" className="space-y-8">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
         <TabsList className="grid w-full max-w-[400px] grid-cols-2 p-1 bg-muted/50 backdrop-blur-sm">
           <TabsTrigger value="content">
             <FileText className="mr-2 h-4 w-4" />
             Content
           </TabsTrigger>
-          <TabsTrigger value="links" className="data-[state=active]:bg-white data-[state=active]:shadow-md transition-all">
+          <TabsTrigger value="links">
             <Link2 className="mr-2 h-4 w-4" />
             Links
           </TabsTrigger>
@@ -163,7 +291,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <CardTitle>Your Content</CardTitle>
-                    <CardDescription>Manage your uploaded content</CardDescription>
+                    <CardDescription>💡Add more CVs and other information about yourself, especially things that didn't fit your resume.</CardDescription>
                   </div>
                   <Badge variant="outline" className="h-7">
                     {cvs.length} files
@@ -185,15 +313,10 @@ export default function DashboardPage() {
                             <FileText className="h-4 w-4 text-primary" />
                           </div>
                           <div className="space-y-1">
-                            <p className="font-medium">{content.fileName}</p>
-                            {content.type === 'text' && (
-                              <p className="text-sm text-muted-foreground line-clamp-1">
-                                {truncateText(content.content)}
-                              </p>
-                            )}
+                            <p className="font-medium">{content.filename || 'Untitled'}</p>
                             <div className="flex items-center space-x-2 text-sm">
                               <Badge variant="outline" className="text-xs">
-                                {content.type.toUpperCase()}
+                                {content.type || 'UNKNOWN'}
                               </Badge>
                               <span className="flex items-center text-muted-foreground">
                                 <Clock className="mr-1 h-3 w-3" />
@@ -208,8 +331,7 @@ export default function DashboardPage() {
                             size="sm" 
                             onClick={() => router.push(`/preview?${new URLSearchParams({
                               id: content._id,
-                              content: content.content,
-                              filename: content.fileName
+                              filename: content.filename || content.fileName
                             }).toString()}`)}
                           >
                             <Eye className="h-4 w-4" />
@@ -235,6 +357,26 @@ export default function DashboardPage() {
           />
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the CV
+              and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingDeleteId(null)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

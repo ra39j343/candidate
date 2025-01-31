@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Plus, Loader2, Trash2 } from "lucide-react"
+import { Plus, Loader2, Trash2, Link2, Copy, Check, Share2 } from "lucide-react"
 import { IShareableLink, IDailyStat } from '@/models/ShareableLink'
+import { useToast } from "@/components/ui/use-toast"
 
 interface ShareableLinksProps {
   links: IShareableLink[]
@@ -17,6 +18,8 @@ interface ShareableLinksProps {
 export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLinkAction }: ShareableLinksProps) {
   const [isCreating, setIsCreating] = useState(false)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const handleCreate = async () => {
     setIsCreating(true)
@@ -40,6 +43,54 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
     }
   }
 
+  const handleCopy = async (link: string) => {
+    await navigator.clipboard.writeText(link)
+    setCopiedId(link)
+    toast({
+      description: "Link copied to clipboard!",
+      duration: 2000
+    })
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const handleShareLinkedIn = (link: string) => {
+    try {
+      // Define share content
+      const shareText = "Hi everyone, I am using EchoProfile, feel free to ask AI about my professional background!"
+      
+      // LinkedIn URL parameters
+      const params = {
+        url: link,
+        title: shareText,
+        summary: shareText,
+        source: 'EchoProfile'
+      }
+      
+      // Build URL with parameters
+      const linkedInUrl = 'https://www.linkedin.com/shareArticle?' + new URLSearchParams({
+        mini: 'true',
+        ...params
+      }).toString()
+
+      console.log('Share URL:', linkedInUrl) // Debug log
+      
+      // Open popup
+      const width = 600
+      const height = 600
+      const left = window.screen.width / 2 - width / 2
+      const top = window.screen.height / 2 - height / 2
+      
+      window.open(
+        linkedInUrl,
+        'linkedin-share',
+        `width=${width},height=${height},left=${left},top=${top}`
+      )
+      
+    } catch (error) {
+      console.error('Share failed:', error)
+    }
+  }
+
   const getTotalStats = (dailyStats: IDailyStat[]) => {
     return dailyStats?.reduce((acc, stat) => ({
       chats: acc.chats + (stat.chatsInitiated || 0),
@@ -49,25 +100,32 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle>Chat Links</CardTitle>
-        <Button 
-          onClick={handleCreate}
-          disabled={isCreating}
-          className="shadow-sm hover:shadow-md transition-all"
-        >
-          {isCreating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating...
-            </>
-          ) : (
-            <>
-              <Plus className="mr-2 h-4 w-4" />
-              Create New Link
-            </>
-          )}
-        </Button>
+      <CardHeader className="space-y-0 pb-2">
+        <div className="flex flex-col space-y-2">
+          <div className="flex flex-row items-center justify-between">
+            <CardTitle>Chat Links</CardTitle>
+            <Button 
+              onClick={handleCreate}
+              disabled={isCreating}
+              className="shadow-sm hover:shadow-md transition-all"
+            >
+              {isCreating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create New Link
+                </>
+              )}
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            💡 Use these links to showcase your profile: add them to your CV, list as a website on LinkedIn, or share directly with recruiters
+          </p>
+        </div>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] w-full rounded-md border p-4">
@@ -93,18 +151,41 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
                     </Badge>
                   </div>
                 </div>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={() => handleDelete(link.id)}
-                  disabled={isDeleting === link.id}
-                >
-                  {isDeleting === link.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4" />
-                  )}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCopy(`${window.location.origin}/chat/public/${link.id}`)}
+                  >
+                    {copiedId === `${window.location.origin}/chat/public/${link.id}` ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-[#0A66C2] hover:bg-[#004182] text-white"
+                    onClick={() => handleShareLinkedIn(`${window.location.origin}/chat/public/${link.id}`)}
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={() => handleDelete(link.id)}
+                    disabled={isDeleting === link.id}
+                  >
+                    {isDeleting === link.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

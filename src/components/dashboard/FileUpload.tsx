@@ -1,16 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Upload } from "lucide-react"
+import { Upload, FileUp, Plus, Loader2 } from "lucide-react"
 import { useRouter } from 'next/navigation'
+import { Button } from "@/components/ui/button"
 
 export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () => void }) {
   const { toast } = useToast()
   const [isUploading, setIsUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
   const router = useRouter()
+  const [canUpload, setCanUpload] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -33,34 +36,27 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
   const handleUpload = async (file: File) => {
     setIsUploading(true)
     try {
-      // First read the file content
-      const content = await file.text()
-      
-      // Create FormData and upload the file directly
       const formData = new FormData()
       formData.append('file', file)
-      
-      const res = await fetch('/api/content/file', {
+      const res = await fetch('/api/upload/cv', {
         method: 'POST',
         body: formData
       })
-
-      if (!res.ok) {
-        throw new Error('Failed to upload file')
+      const data = await res.json()
+      
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "CV uploaded successfully",
+        })
+        onUploadSuccess()
+      } else {
+        throw new Error(data.error)
       }
-
-      // After successful upload, show preview
-      router.push(`/preview?${new URLSearchParams({
-        content,
-        filename: file.name,
-        uploaded: 'true'  // Flag to indicate file is already uploaded
-      }).toString()}`)
-
-      onUploadSuccess()
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to upload file",
+        description: "Failed to upload CV",
         variant: "destructive",
       })
     } finally {
@@ -69,47 +65,70 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
   }
 
   return (
-    <Card className="overflow-hidden border-border/40 shadow-xl">
+    <Card className="relative border-dashed border-2 hover:border-primary/50 transition-colors">
       <CardHeader>
         <CardTitle>Upload CV Files</CardTitle>
         <CardDescription>
-          Upload CV files to train the AI
+          Drop your CV files here or click to browse
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className={`
-            relative rounded-lg border-2 border-dashed transition-all duration-200 ease-in-out
-            ${dragActive ? 'border-primary bg-primary/5 scale-[0.99]' : 'border-border'}
-          `}
+        <div 
+          className={`flex flex-col items-center justify-center space-y-4 p-8 rounded-lg transition-colors ${
+            dragActive ? 'bg-primary/10' : 'bg-muted/50'
+          }`}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragActive(true)
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault()
+            setDragActive(false)
+          }}
+          onDrop={(e) => {
+            e.preventDefault()
+            setDragActive(false)
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+              handleUpload(e.dataTransfer.files[0])
+            }
+          }}
         >
+          <div className="p-4 rounded-full bg-primary/10">
+            <FileUp className="w-8 h-8 text-primary" />
+          </div>
+          <div className="text-center space-y-2">
+            <p className="text-sm text-muted-foreground">
+              PDF, DOC, DOCX, TXT up to 10MB
+            </p>
+            <Button 
+              variant="outline" 
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Choose File
+                </>
+              )}
+            </Button>
+          </div>
           <input
+            ref={fileInputRef}
             type="file"
-            id="file-upload"
+            accept=".pdf,.doc,.docx"
             className="hidden"
-            onChange={(e) => e.target.files && handleUpload(e.target.files[0])}
-            accept=".pdf,.doc,.docx,.txt"
-            disabled={isUploading}
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                handleUpload(e.target.files[0])
+              }
+            }}
           />
-          <label
-            htmlFor="file-upload"
-            className="flex flex-col items-center justify-center p-10 cursor-pointer space-y-4"
-          >
-            <div className="p-4 bg-primary/10 rounded-full">
-              <Upload className="h-6 w-6 text-primary" />
-            </div>
-            <div className="text-center space-y-2">
-              <p className="text-sm font-medium">
-                {isUploading ? "Uploading..." : "Drop files here or click to upload"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                PDF, DOC, DOCX or TXT (max 10MB)
-              </p>
-            </div>
-          </label>
         </div>
       </CardContent>
     </Card>
