@@ -7,7 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { CheckCircle2 } from "lucide-react"
 import { Command, CommandInput } from "@/components/ui/command"
-import { Send, Loader2, Link2 } from "lucide-react"
+import { Send, Loader2, Link2, FileText } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import Link from 'next/link'
 import { BetaDisclaimer } from '@/components/BetaDisclaimer'
@@ -32,18 +32,6 @@ interface ChatInterfaceProps {
   isTest?: boolean
   suggestedQuestions?: string[]
 }
-
-const CreateLinkCTA = () => (
-  <Button 
-    className="fixed right-4 top-4 bg-green-500 hover:bg-green-600 text-white p-4 h-auto flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
-    asChild
-  >
-    <Link href="/dashboard?tab=links&from=test">
-      <Link2 className="w-4 h-4" />
-      <span className="font-medium">Create link to this chat</span>
-    </Link>
-  </Button>
-)
 
 export default function ChatInterface({ 
   messages = [],
@@ -85,19 +73,41 @@ export default function ChatInterface({
 
   return (
     <>
-      {isTest && <CreateLinkCTA />}
-      <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 pb-0.5">
         <div className="flex flex-col min-h-screen max-h-screen bg-white rounded-lg shadow-md border relative">
           {/* Sticky Header */}
-          <div className="sticky top-0 z-10 bg-white border-b px-4 py-2 flex justify-between items-center">
-            <div>
-              <h1 className="text-lg font-semibold">AI Chat Assistant</h1>
-              <p className="text-xs text-muted-foreground">Try asking questions as a recruiter would</p>
+          <div className="sticky top-0 z-10 bg-white border-b px-4 py-1.5">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-[14px] font-semibold">AI Chat Assistant</h1>
+                <p className="text-[9px] text-muted-foreground">Try asking questions as a recruiter would</p>
+              </div>
+              {isTest && (
+                <div className="flex items-center gap-2">
+                  <Link href="/dashboard?tab=content">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center gap-2 text-gray-600 p-3 h-3 text-[10px]"
+                    >
+                      <FileText className="h-3 w-3" />
+                      Give more information to AI
+                    </Button>
+                  </Link>
+                  <Button 
+                    className="bg-green-500 hover:bg-green-600 text-white p-3 h-3 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all text-[10px]"
+                    asChild
+                  >
+                    <Link href="/dashboard?tab=links&from=test">
+                      <Link2 className="w-3 h-3" />
+                      Create link to this chat
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
-            {isTest && <CreateLinkCTA />}
           </div>
 
-          {/* Messages Area - use flex-1 to take remaining space */}
+          {/* Messages Area - will get more space due to smaller header */}
           <div className="flex-1 overflow-y-auto p-4">
             {messages.length === 0 ? (
               <>
@@ -137,18 +147,15 @@ export default function ChatInterface({
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
                   >
                     <div className={`flex items-start gap-2 max-w-[80%] ${
                       message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
                     }`}>
-                      <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center">
+                      <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center mt-0">
                         {message.role === 'assistant' ? '🤖' : '👤'}
                       </div>
                       <div>
-                        <span className="inline-block px-2 py-1 mb-1 text-xs bg-slate-100 rounded-full">
-                          {message.role === 'assistant' ? 'AI Assistant' : 'You'}
-                        </span>
                         <div className={`p-2 rounded-lg ${
                           message.role === 'user' 
                             ? 'bg-blue-500 text-white' 
@@ -156,7 +163,7 @@ export default function ChatInterface({
                         }`}>
                           <div className="space-y-1">
                             {message.content.split('\n').map((paragraph, i) => (
-                              <p key={i} className="text-sm leading-relaxed">
+                              <p key={i} className="text-[11px] leading-relaxed">
                                 {paragraph.startsWith('•') ? (
                                   <span className="flex items-start gap-1">
                                     <span className="text-blue-500">•</span>
@@ -167,7 +174,7 @@ export default function ChatInterface({
                             ))}
                           </div>
                           {message.timestamp && (
-                            <time className="text-xs text-slate-500 mt-1 block">
+                            <time className="text-[9px] text-slate-500 mt-1 block">
                               {new Date(message.timestamp).toLocaleTimeString()}
                             </time>
                           )}
@@ -182,21 +189,21 @@ export default function ChatInterface({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Form - fixed height */}
-          <div className="p-4 border-t">
+          {/* Input Form */}
+          <div className="p-3.5 border-t">
             <form onSubmit={handleSubmit} className="flex gap-2">
               <Command className="flex-1 overflow-hidden rounded-lg border shadow-sm">
                 <CommandInput
                   value={input}
                   onValueChange={setInput}
                   placeholder="Ask anything about the candidate..."
-                  className="text-base h-[80px]"
+                  className="text-[10px] h-[72px]"
                 />
               </Command>
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className={`px-6 h-[80px] hover:scale-105 transition-transform ${
+                className={`px-5 h-[72px] hover:scale-105 transition-transform text-[10px] ${
                   input.trim() 
                     ? 'bg-green-500 hover:bg-green-600' 
                     : 'bg-yellow-200 hover:bg-yellow-500'
@@ -204,12 +211,12 @@ export default function ChatInterface({
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin" />
                     Thinking...
                   </div>
                 ) : (
                   <>
-                    <Send className="w-4 h-4 mr-2" />
+                    <Send className="w-3 h-3 mr-2" />
                     Ask
                   </>
                 )}
@@ -217,10 +224,10 @@ export default function ChatInterface({
             </form>
           </div>
 
-          {/* Suggested Questions - fixed height */}
-          <div className="px-4 py-2 border-t bg-slate-50">
-            <p className="text-xs text-slate-700 mb-2">Common questions:</p>
-            <div className="flex flex-wrap gap-2">
+          {/* Suggested Questions - reduced padding */}
+          <div className="px-4 py-1.5 border-t bg-slate-50">
+            <p className="text-[11px] text-slate-700 mb-1.5">Common questions:</p>
+            <div className="flex flex-wrap gap-1.5">
               {suggestedQuestions.map((question, i) => (
                 <Button
                   key={i}
@@ -228,7 +235,7 @@ export default function ChatInterface({
                   size="sm"
                   onClick={() => handleSuggestedQuestion(question)}
                   disabled={isLoading}
-                  className="text-xs hover:bg-slate-100 whitespace-normal text-left h-auto py-1.5 px-2 min-h-[2rem]"
+                  className="text-[11px] hover:bg-slate-100 whitespace-normal text-left h-auto py-1 px-1.5 min-h-[1.75rem]"
                 >
                   {question}
                 </Button>

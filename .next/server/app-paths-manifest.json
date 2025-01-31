@@ -1,9 +1,9 @@
 {
-  "/auth/login/page": "app/auth/login/page.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/page": "app/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/api/content/route": "app/api/content/route.js",
+  "/chat/public/[linkId]/page": "app/chat/public/[linkId]/page.js",
   "/chat/test/page": "app/chat/test/page.js",
-  "/api/links/route": "app/api/links/route.js",
-  "/api/chat/test/route": "app/api/chat/test/route.js"
+  "/auth/login/page": "app/auth/login/page.js",
+  "/api/content/route": "app/api/content/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js"
 }

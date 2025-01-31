@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { FileText, Trash2, Plus, Clock, Link2, Eye, LogOut } from "lucide-react"
+import { FileText, Trash2, Plus, Clock, Link2, Eye, LogOut, MessageSquare } from "lucide-react"
 import Link from 'next/link'
 import { motion, AnimatePresence } from "framer-motion"
 import ShareableLinks from '@/components/dashboard/ShareableLinks'
@@ -239,35 +239,35 @@ export default function DashboardPage() {
   }
 
     return (
-    <div className="container mx-auto py-4 px-6">
-      <div className="flex justify-between items-center mb-8">
+    <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 pb-0.5">
+      <div className="flex justify-between items-center mb-4">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+          <h1 className="text-[14px] font-semibold tracking-tight">
             Dashboard
           </h1>
-          <p className="text-muted-foreground">
-          Add information about yourself, create and share links to AI-powered chats. 
+          <p className="text-[9px] text-muted-foreground">
+            Manage your content and shareable links
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link href="/chat/test">
-            <Button className="shadow-lg hover:shadow-xl transition-all">
-              <Plus className="mr-2 h-4 w-4" />
-              Test AI Chat
-            </Button>
-          </Link>
+        <div className="flex items-center space-x-2">
           <Button 
-            variant="outline" 
-            onClick={handleLogout}
-            className="shadow-lg hover:shadow-xl transition-all"
+            onClick={() => router.push('/chat/test')}
+            className="text-[10px] h-8 px-3 bg-green-500 hover:bg-green-600 text-white"
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <MessageSquare className="mr-2 h-3 w-3" />
+            Test AI Chat
+          </Button>
+          <Button 
+            onClick={handleLogout}
+            className="text-[10px] h-8 px-3"
+          >
+            <LogOut className="mr-2 h-3 w-3" />
             Sign Out
           </Button>
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full max-w-[400px] grid-cols-2 p-1 bg-muted/50 backdrop-blur-sm">
           <TabsTrigger value="content">
             <FileText className="mr-2 h-4 w-4" />
@@ -280,64 +280,74 @@ export default function DashboardPage() {
         </TabsList>
 
         <AnimatePresence mode="wait">
-          <TabsContent value="content" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TabsContent value="content" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FileUpload onUploadSuccess={fetchContent} />
               <TextUpload onUploadSuccess={fetchContent} />
             </div>
 
             <Card className="border-border/40 shadow-xl">
-              <CardHeader>
+              <CardHeader className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <CardTitle>Your Content</CardTitle>
-                    <CardDescription>💡Add more CVs and other information about yourself, especially things that didn't fit your resume.</CardDescription>
+                  <div className="space-y-0.5">
+                    <CardTitle className="text-[14px]">Your Content</CardTitle>
+                    <CardDescription className="text-[9px]">
+                      💡 Add more CVs and other information about yourself, especially things that didn't fit your resume.
+                    </CardDescription>
                   </div>
-                  <Badge variant="outline" className="h-7">
+                  <Badge variant="outline" className="text-[9px] h-5">
                     {cvs.length} files
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[400px] rounded-md">
-                  <div className="space-y-4 p-1">
+              <CardContent className="pt-0">
+                <ScrollArea className="h-[300px] rounded-md">
+                  <div className="space-y-2 p-0.5">
                     {cvs.map((content) => (
                       <motion.div
                         key={content._id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="group flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                        className="group flex items-center justify-between py-2 px-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
                       >
-                        <div className="flex items-center space-x-4">
-                          <div className="p-2 rounded-full bg-primary/10">
-                            <FileText className="h-4 w-4 text-primary" />
+                        <div className="flex items-center space-x-3">
+                          <div className="p-1.5 rounded-full bg-primary/10">
+                            <FileText className="h-3 w-3 text-primary" />
                           </div>
-                          <div className="space-y-1">
-                            <p className="font-medium">{content.filename || 'Untitled'}</p>
-                            <div className="flex items-center space-x-2 text-sm">
-                              <Badge variant="outline" className="text-xs">
+                          <div className="space-y-0.5">
+                            <p className="text-[11px] font-medium leading-none">
+                              {content.filename || 'Untitled'}
+                            </p>
+                            <div className="flex items-center space-x-2">
+                              <Badge variant="outline" className="text-[9px] h-4 px-1.5">
                                 {content.type || 'UNKNOWN'}
                               </Badge>
-                              <span className="flex items-center text-muted-foreground">
-                                <Clock className="mr-1 h-3 w-3" />
+                              <span className="flex items-center text-[9px] text-muted-foreground">
+                                <Clock className="mr-1 h-2.5 w-2.5" />
                                 Added {new Date(content.createdAt).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button 
                             variant="ghost" 
                             size="sm" 
+                            className="h-6 w-6 p-0"
                             onClick={() => router.push(`/preview?${new URLSearchParams({
                               id: content._id,
                               filename: content.filename || content.fileName
                             }).toString()}`)}
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-3 w-3" />
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDeleteCV(content._id)}>
-                            <Trash2 className="h-4 w-4" />
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 w-6 p-0"
+                            onClick={() => handleDeleteCV(content._id)}
+                          >
+                            <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
                       </motion.div>

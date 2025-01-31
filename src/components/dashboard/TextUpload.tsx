@@ -78,24 +78,24 @@ export default function TextUpload({ onUploadSuccess }: { onUploadSuccess: () =>
   return (
     <>
       <Card className="overflow-hidden border-border/40 shadow-xl">
-        <CardHeader>
-          <CardTitle>Add Text</CardTitle>
-          <CardDescription>
+        <CardHeader className="pb-2 pt-3 space-y-0">
+          <CardTitle className="text-[14px]">Add Text</CardTitle>
+          <CardDescription className="text-[9px]">
             Tell details about your experience, skills, hobbies in plain text.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-2 pb-3">
           <Textarea 
             placeholder="Share your story in your own words...."
             value={text}
             onChange={(e) => setText(e.target.value)}
-            rows={5}
-            className="resize-none"
+            rows={3}
+            className="text-[10px] resize-none min-h-[60px]"
           />
           <Button 
             onClick={handleSubmit} 
             disabled={isSubmitting || !text.trim()}
-            className="w-full"
+            className="w-full text-[10px] h-7"
           >
             {isSubmitting ? "Encrypting & Uploading..." : "Upload Text"}
           </Button>

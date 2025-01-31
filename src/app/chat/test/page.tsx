@@ -59,12 +59,7 @@ export default function TestChatPage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold">AI Chat Assistant</h1>
-        <p className="text-gray-600">Try asking questions as a recruiter would</p>
-      </div>
-
+    <div className="h-screen">
       <ChatInterface 
         messages={messages}
         onSendMessage={handleSendMessage}

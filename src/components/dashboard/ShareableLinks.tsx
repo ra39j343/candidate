@@ -103,11 +103,11 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
       <CardHeader className="space-y-0 pb-2">
         <div className="flex flex-col space-y-2">
           <div className="flex flex-row items-center justify-between">
-            <CardTitle>Chat Links</CardTitle>
+            <CardTitle className="text-[14px]">Chat Links</CardTitle>
             <Button 
               onClick={handleCreate}
               disabled={isCreating}
-              className="shadow-sm hover:shadow-md transition-all"
+              className="text-[10px] h-8 px-3 shadow-sm hover:shadow-md transition-all"
             >
               {isCreating ? (
                 <>
@@ -122,7 +122,7 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
               )}
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[9px] text-muted-foreground">
             💡 Use these links to showcase your profile: add them to your CV, list as a website on LinkedIn, or share directly with recruiters
           </p>
         </div>
@@ -136,10 +136,10 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
                 className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
               >
                 <div className="space-y-1">
-                  <p className="font-medium break-all">
+                  <div className="font-medium break-all text-[11px]">
                     {window.location.origin}/chat/public/{link.id}
-                  </p>
-                  <div className="flex items-center space-x-2">
+                  </div>
+                  <div className="text-[9px] flex items-center space-x-2">
                     <Badge variant="outline">
                       Created: {new Date(link.createdAt).toLocaleDateString()}
                     </Badge>
@@ -156,6 +156,7 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
                     variant="outline"
                     size="sm"
                     onClick={() => handleCopy(`${window.location.origin}/chat/public/${link.id}`)}
+                    className="text-[10px] h-7 px-2"
                   >
                     {copiedId === `${window.location.origin}/chat/public/${link.id}` ? (
                       <Check className="h-4 w-4 text-green-500" />
@@ -166,7 +167,7 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-[#0A66C2] hover:bg-[#004182] text-white"
+                    className="bg-[#0A66C2] hover:bg-[#004182] text-white text-[10px] h-7 px-2"
                     onClick={() => handleShareLinkedIn(`${window.location.origin}/chat/public/${link.id}`)}
                   >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -178,6 +179,7 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
                     size="sm"
                     onClick={() => handleDelete(link.id)}
                     disabled={isDeleting === link.id}
+                    className="text-[10px] h-7 px-2"
                   >
                     {isDeleting === link.id ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
