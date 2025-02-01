@@ -12,42 +12,10 @@ import { Separator } from "@/components/ui/separator"
 import Link from 'next/link'
 import { BetaDisclaimer } from '@/components/BetaDisclaimer'
 
-interface MessageProps {
+interface Message {
   role: 'user' | 'assistant'
   content: string
   timestamp?: Date
-}
-
-interface ChatInterfaceProps {
-  messages?: MessageProps[]
-  onSendMessage: (message: string) => Promise<void>
-  isPublic?: boolean
-  isTest?: boolean
-  suggestedQuestions?: string[]
-}
-
-// Define Message component
-function MessageComponent({ role, content }: MessageProps) {
-  return (
-    <div className={`flex ${role === 'assistant' ? 'justify-start' : 'justify-end'}`}>
-      <div className={`flex items-start gap-2.5 max-w-[80%] ${
-        role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
-      }`}>
-        <Avatar className="w-6 h-6">
-          <AvatarFallback>
-            {role === 'assistant' ? 'AI' : 'U'}
-          </AvatarFallback>
-        </Avatar>
-        <div className={`rounded-lg px-3 py-2 text-[11px] ${
-          role === 'assistant' 
-            ? 'bg-muted' 
-            : 'bg-primary text-primary-foreground'
-        }`}>
-          {content}
-        </div>
-      </div>
-    </div>
-  )
 }
 
 const DEFAULT_SUGGESTED_QUESTIONS = [
@@ -57,9 +25,17 @@ const DEFAULT_SUGGESTED_QUESTIONS = [
   "What languages does candidate speak?"
 ]
 
+interface ChatInterfaceProps {
+  messages?: Message[]
+  onSendMessageAction: (message: string) => Promise<void>
+  isPublic?: boolean
+  isTest?: boolean
+  suggestedQuestions?: string[]
+}
+
 export default function ChatInterface({ 
   messages = [],
-  onSendMessage, 
+  onSendMessageAction,
   isPublic,
   isTest,
   suggestedQuestions = DEFAULT_SUGGESTED_QUESTIONS 
@@ -78,7 +54,7 @@ export default function ChatInterface({
 
     setIsLoading(true)
     try {
-      await onSendMessage(input)
+      await onSendMessageAction(input)
       setInput('')
     } finally {
       setIsLoading(false)
@@ -89,7 +65,7 @@ export default function ChatInterface({
     if (isLoading) return
     setIsLoading(true)
     try {
-      await onSendMessage(question)
+      await onSendMessageAction(question)
     } finally {
       setIsLoading(false)
     }
@@ -97,7 +73,7 @@ export default function ChatInterface({
 
   return (
     <>
-      <div className="flex flex-col h-screen overflow-hidden">
+      <div className="flex flex-col h-[calc(100vh-2rem)] bg-white rounded-lg shadow-md border relative">
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 bg-white border-b px-4 py-1.5">
           <div className="flex justify-between items-center">
@@ -145,51 +121,121 @@ export default function ChatInterface({
           </div>
         </div>
 
-        {/* Messages container with fixed height and scrolling */}
-        <div className="flex-1 overflow-y-auto px-4">
-          <div className="max-w-3xl mx-auto space-y-4 py-4">
-            {messages.map((message, index) => (
-              <MessageComponent key={index} {...message} />
-            ))}
-            {isLoading && <TypingIndicator />}
-          </div>
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {messages.length === 0 ? (
+            <>
+              {/* Help Message - centered */}
+              <div className="flex flex-col justify-center h-1/2">
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src="/ai-avatar.png" />
+                      <AvatarFallback>AI</AvatarFallback>
+                    </Avatar>
+                    <span className="text-md font-medium">How I can help you:</span>
+                  </div>
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <div className="space-y-2">
+                      {["Analyze candidate's experience", "Evaluate leadership skills", "Provide salary insights"].map((text) => (
+                        <div key={text} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3 h-3 text-green-500" />
+                          <span className="text-sm text-slate-600">{text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* No Messages Text - at bottom */}
+              <div className="flex flex-col items-center justify-end h-1/2 space-y-4 text-slate-500">
+                <div className="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center">
+                  💬
+                </div>
+                <p>No messages yet. Start by asking a question!</p>
+              </div>
+            </>
+          ) : (
+            <>
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
+                >
+                  <div className={`flex items-start gap-2 max-w-[80%] ${
+                    message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                  }`}>
+                    <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center mt-0">
+                      {message.role === 'assistant' ? '🤖' : '👤'}
+                    </div>
+                    <div>
+                      <div className={`p-2 rounded-lg ${
+                        message.role === 'user' 
+                          ? 'bg-blue-500 text-white' 
+                          : 'bg-slate-100'
+                      }`}>
+                        <div className="space-y-1">
+                          {message.content.split('\n').map((paragraph, i) => (
+                            <p key={i} className="text-[11px] leading-relaxed">
+                              {paragraph.startsWith('•') ? (
+                                <span className="flex items-start gap-1">
+                                  <span className="text-blue-500">•</span>
+                                  {paragraph.substring(1)}
+                                </span>
+                              ) : paragraph}
+                            </p>
+                          ))}
+                        </div>
+                        {message.timestamp && (
+                          <time className="text-[9px] text-slate-500 mt-1 block">
+                            {new Date(message.timestamp).toLocaleTimeString()}
+                          </time>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {isLoading && <TypingIndicator />}
+            </>
+          )}
+          <div ref={messagesEndRef} />
         </div>
 
-        {/* Input area stays fixed at bottom */}
-        <div className="flex-shrink-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4">
-          <div className="max-w-3xl mx-auto">
-            <form onSubmit={handleSubmit} className="flex gap-2">
-              <Command className="flex-1 overflow-hidden rounded-lg border shadow-sm">
-                <CommandInput
-                  value={input}
-                  onValueChange={setInput}
-                  placeholder="Ask anything about the candidate..."
-                  className="text-[10px] h-[72px]"
-                />
-              </Command>
-              <Button 
-                type="submit" 
-                disabled={isLoading}
-                className={`px-5 h-[72px] hover:scale-105 transition-transform text-[10px] ${
-                  input.trim() 
-                    ? 'bg-green-500 hover:bg-green-600' 
-                    : 'bg-yellow-200 hover:bg-yellow-500'
-                } text-black`}
-              >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    Thinking...
-                  </div>
-                ) : (
-                  <>
-                    <Send className="w-3 h-3 mr-2" />
-                    Ask
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
+        {/* Input Form */}
+        <div className="p-3.5 border-t">
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <Command className="flex-1 overflow-hidden rounded-lg border shadow-sm">
+              <CommandInput
+                value={input}
+                onValueChange={setInput}
+                placeholder="Ask anything about the candidate..."
+                className="text-[10px] h-[72px]"
+              />
+            </Command>
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className={`px-5 h-[72px] hover:scale-105 transition-transform text-[10px] ${
+                input.trim() 
+                  ? 'bg-green-500 hover:bg-green-600' 
+                  : 'bg-yellow-200 hover:bg-yellow-500'
+              } text-black`}
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Thinking...
+                </div>
+              ) : (
+                <>
+                  <Send className="w-3 h-3 mr-2" />
+                  Ask
+                </>
+              )}
+            </Button>
+          </form>
         </div>
 
         {/* Suggested Questions */}
