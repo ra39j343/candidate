@@ -8,6 +8,11 @@ async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+// Move function declaration to the top level
+function stripMarkdown(text: string): string {
+  return text.replace(/\*\*/g, '');
+}
+
 export async function getAIResponse(userId: string, question: string) {
   try {
     if (!process.env.MINIMAX_API_KEY) {
@@ -78,11 +83,6 @@ export async function getAIResponse(userId: string, question: string) {
     5. Keep original metrics and numbers
     
     Question: ${question}`
-
-    // Add this helper function at the top of the file
-    function stripMarkdown(text: string): string {
-      return text.replace(/\*\*/g, '');
-    }
 
     let retries = MAX_RETRIES
     while (retries > 0) {

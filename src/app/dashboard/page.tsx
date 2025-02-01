@@ -316,7 +316,7 @@ export default function DashboardPage() {
                           </div>
                           <div className="space-y-0.5">
                             <p className="text-[11px] font-medium leading-none">
-                              {content.filename || 'Untitled'}
+                              {content.fileName || 'Untitled'}
                             </p>
                             <div className="flex items-center space-x-2">
                               <Badge variant="outline" className="text-[9px] h-4 px-1.5">
@@ -336,7 +336,7 @@ export default function DashboardPage() {
                             className="h-6 w-6 p-0"
                             onClick={() => router.push(`/preview?${new URLSearchParams({
                               id: content._id,
-                              filename: content.filename || content.fileName
+                              filename: content.fileName
                             }).toString()}`)}
                           >
                             <Eye className="h-3 w-3" />
