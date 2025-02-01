@@ -27,7 +27,7 @@ const DEFAULT_SUGGESTED_QUESTIONS = [
 
 interface ChatInterfaceProps {
   messages?: Message[]
-  onSendMessage: (message: string) => Promise<void>
+  onSendMessageAction: (message: string) => Promise<void>
   isPublic?: boolean
   isTest?: boolean
   suggestedQuestions?: string[]
@@ -35,7 +35,7 @@ interface ChatInterfaceProps {
 
 export default function ChatInterface({ 
   messages = [],
-  onSendMessage, 
+  onSendMessageAction,
   isPublic,
   isTest,
   suggestedQuestions = DEFAULT_SUGGESTED_QUESTIONS 
@@ -54,7 +54,7 @@ export default function ChatInterface({
 
     setIsLoading(true)
     try {
-      await onSendMessage(input)
+      await onSendMessageAction(input)
       setInput('')
     } finally {
       setIsLoading(false)
@@ -65,7 +65,7 @@ export default function ChatInterface({
     if (isLoading) return
     setIsLoading(true)
     try {
-      await onSendMessage(question)
+      await onSendMessageAction(question)
     } finally {
       setIsLoading(false)
     }
