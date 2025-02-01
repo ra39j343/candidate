@@ -72,57 +72,57 @@ export default function ChatInterface({
   }
 
   return (
-    <>
-      <div className="flex flex-col h-screen bg-white rounded-lg shadow-md border relative">
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white border-b px-4 py-1.5">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-[14px] font-semibold">AI Chat Assistant</h1>
-              <p className="text-[9px] text-muted-foreground">
-                {isTest 
-                  ? "Try asking questions as a recruiter would"
-                  : "Ask questions about the candidate"
-                }
-              </p>
-            </div>
-            {isTest ? (
-              <div className="flex items-center gap-2">
-                <Link href="/dashboard?tab=content">
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center gap-2 text-gray-600 p-3 h-3 text-[10px]"
-                  >
-                    <FileText className="h-3 w-3" />
-                    Give more information to AI
-                  </Button>
-                </Link>
+    <div className="h-full flex flex-col">
+      {/* Sticky header */}
+      <div className="flex-shrink-0 bg-white border-b px-4 py-1.5">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-[14px] font-semibold">AI Chat Assistant</h1>
+            <p className="text-[9px] text-muted-foreground">
+              {isTest 
+                ? "Try asking questions as a recruiter would"
+                : "Ask questions about the candidate"
+              }
+            </p>
+          </div>
+          {isTest ? (
+            <div className="flex items-center gap-2">
+              <Link href="/dashboard?tab=content">
                 <Button 
-                  className="bg-green-500 hover:bg-green-600 text-white p-3 h-3 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all text-[10px]"
-                  asChild
+                  variant="outline" 
+                  className="flex items-center gap-2 text-gray-600 p-3 h-3 text-[10px]"
                 >
-                  <Link href="/dashboard?tab=links&from=test">
-                    <Link2 className="w-3 h-3" />
-                    Create link to this chat
-                  </Link>
+                  <FileText className="h-3 w-3" />
+                  Give more information to AI
                 </Button>
-              </div>
-            ) : isPublic && (
+              </Link>
               <Button 
                 className="bg-green-500 hover:bg-green-600 text-white p-3 h-3 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all text-[10px]"
                 asChild
               >
-                <Link href="/auth/register">
-                  <Link2 className="w-3 h-3 mr-1" />
-                  Create your own EchoProfile link
+                <Link href="/dashboard?tab=links&from=test">
+                  <Link2 className="w-3 h-3" />
+                  Create link to this chat
                 </Link>
               </Button>
-            )}
-          </div>
+            </div>
+          ) : isPublic && (
+            <Button 
+              className="bg-green-500 hover:bg-green-600 text-white p-3 h-3 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all text-[10px]"
+              asChild
+            >
+              <Link href="/auth/register">
+                <Link2 className="w-3 h-3 mr-1" />
+                Create your own EchoProfile link
+              </Link>
+            </Button>
+          )}
         </div>
+      </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4">
+      {/* Messages area with scrolling */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        <div className="max-w-3xl mx-auto space-y-4 py-4">
           {messages.length === 0 ? (
             <>
               {/* Help Message - centered */}
@@ -147,7 +147,7 @@ export default function ChatInterface({
                   </div>
                 </div>
               </div>
-              
+            
               {/* No Messages Text - at bottom */}
               <div className="flex flex-col items-center justify-end h-1/2 space-y-4 text-slate-500">
                 <div className="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center">
@@ -202,46 +202,49 @@ export default function ChatInterface({
           )}
           <div ref={messagesEndRef} />
         </div>
+      </div>
 
-        {/* Input Form */}
-        <div className="p-3.5 border-t">
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <Command className="flex-1 overflow-hidden rounded-lg border shadow-sm">
-              <CommandInput
-                value={input}
-                onValueChange={setInput}
-                placeholder="Ask anything about the candidate..."
-                className="text-[10px] h-[72px]"
-              />
-            </Command>
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              className={`px-5 h-[72px] hover:scale-105 transition-transform text-[10px] ${
-                input.trim() 
-                  ? 'bg-green-500 hover:bg-green-600' 
-                  : 'bg-yellow-200 hover:bg-yellow-500'
-              } text-black`}
-            >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  Thinking...
-                </div>
-              ) : (
-                <>
-                  <Send className="w-3 h-3 mr-2" />
-                  Ask
-                </>
-              )}
-            </Button>
-          </form>
+      {/* Input and suggestions - with reduced heights */}
+      <div className="flex-shrink-0 bg-background">
+        <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-3">
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit} className="flex gap-2">
+              <Command className="flex-1 overflow-hidden rounded-lg border shadow-sm">
+                <CommandInput
+                  value={input}
+                  onValueChange={setInput}
+                  placeholder="Ask anything about the candidate..."
+                  className="text-[10px] h-[48px]"
+                />
+              </Command>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className={`px-4 h-[48px] hover:scale-105 transition-transform text-[10px] ${
+                  input.trim() 
+                    ? 'bg-green-500 hover:bg-green-600' 
+                    : 'bg-yellow-200 hover:bg-yellow-500'
+                } text-black`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Thinking...
+                  </div>
+                ) : (
+                  <>
+                    <Send className="w-3 h-3 mr-2" />
+                    Ask
+                  </>
+                )}
+              </Button>
+            </form>
+          </div>
         </div>
 
-        {/* Suggested Questions */}
         <div className="px-4 py-1.5 border-t bg-slate-50">
-          <p className="text-[11px] text-slate-700 mb-1.5">Common questions:</p>
-          <div className="flex flex-wrap gap-1.5">
+          <p className="text-[11px] text-slate-700 mb-1">Common questions:</p>
+          <div className="flex flex-wrap gap-1 mb-1.5">
             {suggestedQuestions.map((question, i) => (
               <Button
                 key={i}
@@ -249,7 +252,7 @@ export default function ChatInterface({
                 size="sm"
                 onClick={() => handleSuggestedQuestion(question)}
                 disabled={isLoading}
-                className="text-[11px] hover:bg-slate-100 whitespace-normal text-left h-auto py-1 px-1.5 min-h-[1.75rem]"
+                className="text-[11px] hover:bg-slate-100 whitespace-normal text-left h-auto py-0.5 px-1.5 min-h-[1.5rem]"
               >
                 {question}
               </Button>
@@ -257,7 +260,6 @@ export default function ChatInterface({
           </div>
         </div>
       </div>
-      <BetaDisclaimer />
-    </>
+    </div>
   )
 }

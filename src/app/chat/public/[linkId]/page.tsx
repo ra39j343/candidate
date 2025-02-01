@@ -40,7 +40,7 @@ export default function PublicChatPage({ params }: { params: { linkId: string } 
   }
 
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-[calc(100vh-48px)]">
       <ChatInterface 
         messages={messages}
         onSendMessageAction={handleSendMessage}
