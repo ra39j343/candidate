@@ -80,15 +80,15 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
 
   return (
     <Card className="relative border-dashed border-2 hover:border-primary/50 transition-colors">
-      <CardHeader className="pb-2 pt-2 space-y-0">
+      <CardHeader className="pb-1 pt-1 space-y-0">
         <CardTitle className="text-[14px]">Upload CV Files</CardTitle>
         <CardDescription className="text-[9px]">
           Drop your text files here or click to browse (.txt only)
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-3">
+      <CardContent className="pb-2">
         <div 
-          className={`flex flex-col items-center justify-center space-y-2 p-4 rounded-lg transition-colors ${
+          className={`flex flex-col items-center justify-center space-y-1 p-2 rounded-lg transition-colors ${
             dragActive ? 'bg-primary/10' : 'bg-muted/50'
           }`}
           onDragOver={handleDragOver}

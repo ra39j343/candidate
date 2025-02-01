@@ -55,17 +55,20 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
 
   const handleShareLinkedIn = (link: string) => {
     try {
-      const shareText = "Hi everyone! Check out my EchoProfile link to ask AI questions about my professional background and experience. "
+      const shareText = "Hi everyone! Check out my EchoProfile link to ask AI questions about my professional background and experience."
       const shareUrl = encodeURIComponent(link)
       
-      console.log('Share Text:', shareText)
-      console.log('Share URL:', shareUrl)
+      console.log('Original share text:', shareText)
+      console.log('Original URL:', link)
       
-      const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?mini=true&url=${shareUrl}&title=${encodeURIComponent(shareText)}&source=EchoProfile`
-      console.log('LinkedIn Share URL:', linkedInUrl)
+      const linkedInUrl = new URL('https://www.linkedin.com/sharing/share-offsite/')
+      linkedInUrl.searchParams.append('url', link)
+      linkedInUrl.searchParams.append('summary', shareText)
+      
+      console.log('Final LinkedIn URL:', linkedInUrl.toString())
       
       const shareWindow = window.open(
-        linkedInUrl,
+        linkedInUrl.toString(),
         'linkedin-share',
         'width=600,height=600,left=' + (window.screen.width / 2 - 300) + ',top=' + (window.screen.height / 2 - 300)
       )

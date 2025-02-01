@@ -78,13 +78,13 @@ export default function TextUpload({ onUploadSuccess }: { onUploadSuccess: () =>
   return (
     <>
       <Card className="overflow-hidden border-border/40 shadow-xl">
-        <CardHeader className="pb-2 pt-3 space-y-0">
+        <CardHeader className="pb-1 pt-1 space-y-0">
           <CardTitle className="text-[14px]">Add Text</CardTitle>
           <CardDescription className="text-[9px]">
             Tell details about your experience, skills, hobbies in plain text.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2 pb-3">
+        <CardContent className="space-y-2 pb-2">
           <Textarea 
             placeholder="Share your story in your own words...."
             value={text}
