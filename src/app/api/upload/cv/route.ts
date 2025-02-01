@@ -5,12 +5,11 @@ import { Content } from '@/models/content'
 import { cvUploadSchema } from '@/validation/schemas'
 import { handleError } from '@/utils/handleErrors'
 import { Encryption } from '@/utils/encryption'
-// Import the legacy build specifically
-import * as pdfjs from 'pdfjs-dist/legacy/build/pdf'
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js'
+import path from 'path'
 
-// Configure worker
-const pdfjsWorker = require('pdfjs-dist/legacy/build/pdf.worker.entry')
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
+// Configure worker for Node.js environment
+pdfjsLib.GlobalWorkerOptions.workerSrc = path.resolve(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.js')
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,33 +21,18 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData()
     const file = formData.get('file') as File
     console.log('Upload received file:', { name: file.name, type: file.type })
-    
-    cvUploadSchema.parse({ file })
 
-    let content: string
-
-    if (file.type === 'application/pdf') {
-      console.log('Processing PDF file...')
-      const arrayBuffer = await file.arrayBuffer()
-      const uint8Array = new Uint8Array(arrayBuffer)
-      
-      const loadingTask = pdfjs.getDocument(uint8Array)
-      const pdf = await loadingTask.promise
-      console.log('PDF loaded, pages:', pdf.numPages)
-      
-      const textContent = []
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i)
-        const text = await page.getTextContent()
-        textContent.push(text.items.map((item: any) => item.str).join(' '))
-      }
-      
-      content = textContent.join('\n\n')
-      console.log('PDF content extracted, length:', content.length)
-    } else {
-      content = await file.text()
+    // Only accept text files for now
+    if (file.type !== 'text/plain') {
+      return NextResponse.json({ 
+        error: 'Only .txt files are currently supported' 
+      }, { status: 400 })
     }
 
+    cvUploadSchema.parse({ file })
+    const content = await file.text()
+
+    await connectDB()
     const newContent = new Content({
       userId: token.sub,
       type: 'file',
@@ -58,7 +42,6 @@ export async function POST(req: NextRequest) {
       mimeType: file.type
     })
 
-    await connectDB()
     await newContent.save()
     console.log('Content saved to database:', { id: newContent._id, filename: newContent.fileName })
 
@@ -72,6 +55,8 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     console.error('Error processing file:', error)
-    return NextResponse.json({ error: 'Error processing file' }, { status: 500 })
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Error processing file' 
+    }, { status: 500 })
   }
 } 

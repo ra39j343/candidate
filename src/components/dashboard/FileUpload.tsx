@@ -11,8 +11,6 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
   const { toast } = useToast()
   const [isUploading, setIsUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
-  const router = useRouter()
-  const [canUpload, setCanUpload] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -33,17 +31,33 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
     }
   }
 
+  const validateFile = (file: File) => {
+    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain']
+    if (!validTypes.includes(file.type)) {
+      throw new Error('Invalid file type. Please upload PDF, DOC, DOCX, or TXT files only.')
+    }
+    if (file.size > 10 * 1024 * 1024) { // 10MB
+      throw new Error('File size too large. Maximum size is 10MB.')
+    }
+  }
+
   const handleUpload = async (file: File) => {
     setIsUploading(true)
     try {
+      validateFile(file)
       const formData = new FormData()
       formData.append('file', file)
+      
       const res = await fetch('/api/upload/cv', {
         method: 'POST',
         body: formData
       })
-      const data = await res.json()
       
+      if (!res.ok) {
+        throw new Error('Upload failed')
+      }
+      
+      const data = await res.json()
       if (data.success) {
         toast({
           title: "Success",
@@ -51,12 +65,12 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
         })
         onUploadSuccess()
       } else {
-        throw new Error(data.error)
+        throw new Error(data.error || 'Upload failed')
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to upload CV",
+        description: error instanceof Error ? error.message : "Failed to upload CV",
         variant: "destructive",
       })
     } finally {
@@ -69,7 +83,7 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
       <CardHeader className="pb-2 pt-2 space-y-0">
         <CardTitle className="text-[14px]">Upload CV Files</CardTitle>
         <CardDescription className="text-[9px]">
-          Drop your CV files here or click to browse
+          Drop your text files here or click to browse (.txt only)
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-3">
@@ -110,7 +124,7 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
           <input
             ref={fileInputRef}
             type="file"
-            accept=".pdf,.doc,.docx"
+            accept=".txt"
             className="hidden"
             onChange={(e) => {
               if (e.target.files && e.target.files[0]) {
