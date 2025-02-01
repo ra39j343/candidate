@@ -239,7 +239,8 @@ export default function DashboardPage() {
   }
 
     return (
-    <div className="container mx-auto max-w-[1400px] h-screen p-4">
+    <div className="h-[calc(100vh-48px)]">
+      <div className="container mx-auto max-w-[1400px] h-full p-4 flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <div className="space-y-1">
           <h1 className="text-[18px] font-semibold tracking-tight">
@@ -267,7 +268,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
         <TabsList className="grid w-full max-w-[400px] grid-cols-2 p-1 bg-muted/50 backdrop-blur-sm">
           <TabsTrigger value="content" className="text-xs">
             <FileText className="mr-2 h-4 w-4" />
@@ -280,13 +281,13 @@ export default function DashboardPage() {
         </TabsList>
 
         <AnimatePresence mode="wait">
-          <TabsContent value="content" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TabsContent value="content" className="flex-1 flex flex-col min-h-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <FileUpload onUploadSuccess={fetchContent} />
               <TextUpload onUploadSuccess={fetchContent} />
             </div>
 
-            <Card className="border-border/40 shadow-xl">
+            <Card className="border-border/40 shadow-xl flex-1 flex flex-col min-h-0">
               <CardHeader className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
@@ -300,8 +301,8 @@ export default function DashboardPage() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="pt-0">
-                <ScrollArea className="h-[300px] rounded-md">
+              <CardContent className="flex-1 min-h-0">
+                <ScrollArea className="h-full">
                   <div className="space-y-2 p-0.5">
                     {cvs.map((content) => (
                       <motion.div
@@ -359,7 +360,7 @@ export default function DashboardPage() {
           </TabsContent>
         </AnimatePresence>
 
-        <TabsContent value="links">
+        <TabsContent value="links" className="flex-1">
           <ShareableLinks 
             links={links}
             onCreateLinkAction={handleCreateLink}
@@ -388,5 +389,6 @@ export default function DashboardPage() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  </div>
+)
 }
