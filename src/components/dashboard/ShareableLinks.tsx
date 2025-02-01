@@ -55,14 +55,14 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
 
   const handleShareLinkedIn = (link: string) => {
     try {
-      // Define share content
-      const shareText = "Hi everyone, I am using EchoProfile, feel free to ask AI about my professional background!"
+      // Define share content with both text and link
+      const shareText = "Hi everyone! Check out my EchoProfile link to ask AI questions about my professional background and experience. "
       
       // LinkedIn URL parameters
       const params = {
         url: link,
-        title: shareText,
-        summary: shareText,
+        title: "My EchoProfile AI Assistant",
+        summary: shareText + link, // Combine text and link
         source: 'EchoProfile'
       }
       
@@ -71,8 +71,6 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
         mini: 'true',
         ...params
       }).toString()
-
-      console.log('Share URL:', linkedInUrl) // Debug log
       
       // Open popup
       const width = 600

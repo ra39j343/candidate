@@ -42,8 +42,11 @@ export async function POST(req: NextRequest) {
 
     await connectDB();
     
+    // Get user's first name from token or use default
+    const firstName = token.name?.split(' ')[0] || 'user';
+    
     const newLink = new ShareableLink({
-      id: nanoid(10),
+      id: await ShareableLink.generateId(firstName),
       userId: token.id,
       isActive: true,
       dailyStats: [{
@@ -53,11 +56,7 @@ export async function POST(req: NextRequest) {
       }]
     });
 
-    console.log('Creating new link:', newLink); // Debug log
-
     await newLink.save();
-
-    console.log('Saved link to database:', await ShareableLink.findOne({ id: newLink.id })); // Verify save
 
     return NextResponse.json({
       success: true,

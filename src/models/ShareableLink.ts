@@ -48,8 +48,7 @@ shareableLinkSchema.statics.generateId = function(firstName: string = '') {
   const sanitizedName = firstName.toLowerCase()
     .replace(/[^a-z0-9]/g, '')
     .slice(0, 10);
-  const uniqueId = nanoid(3); // Reduced to 3 characters for shorter URLs
-  return `${sanitizedName}-${uniqueId}`;
+  return `echo-${sanitizedName}-${nanoid(4)}`;
 };
 
 // Add method to get public URL
@@ -64,4 +63,10 @@ shareableLinkSchema.methods.getPublicUrl = function() {
   return `${baseUrl}/p/${this.id}`;
 };
 
-export const ShareableLink = mongoose.models.ShareableLink || mongoose.model<IShareableLink>('ShareableLink', shareableLinkSchema);
+// Add static method to interface
+interface ShareableLinkModel extends mongoose.Model<IShareableLink> {
+  generateId(firstName?: string): string;
+}
+
+// Update model export with proper typing
+export const ShareableLink = (mongoose.models.ShareableLink || mongoose.model<IShareableLink, ShareableLinkModel>('ShareableLink', shareableLinkSchema)) as ShareableLinkModel;
