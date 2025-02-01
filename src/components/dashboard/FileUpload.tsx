@@ -100,7 +100,7 @@ export default function FileUpload({ onUploadSuccess }: { onUploadSuccess: () =>
           </div>
           <div className="text-center space-y-1">
             <p className="text-[9px] text-muted-foreground">
-              PDF, DOC, DOCX, TXT up to 10MB
+              TXT up to 10MB
             </p>
             <Button 
               variant="outline" 

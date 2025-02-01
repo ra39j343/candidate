@@ -1,9 +1,1 @@
-{
-  "/chat/public/[linkId]/page": "app/chat/public/[linkId]/page.js",
-  "/auth/login/page": "app/auth/login/page.js",
-  "/chat/test/page": "app/chat/test/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/api/content/route": "app/api/content/route.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/auth/register/page": "app/auth/register/page.js"
-}
+{}
