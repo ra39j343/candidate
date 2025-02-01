@@ -56,7 +56,7 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
   const handleShareLinkedIn = (link: string) => {
     try {
       // Keep text shorter to look better in feed
-      const shareText = "Ask AI questions about my professional background using my EchoProfile link!"
+      const shareText = "Hi everyone! I'm excited to share my EchoProfile link! Ask AI questions about my professional background. Curious about my skills, experiences, or how I tackle challenges? Just click the link and explore!"
       const shareUrl = encodeURIComponent(link)
       
       console.group('LinkedIn Share Debug')
@@ -88,8 +88,8 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
   };
 
   return (
-    <Card>
-      <CardHeader className="space-y-0 pb-2">
+    <Card className="border-border/40 shadow-xl">
+      <CardHeader className="pb-2 pt-3">
         <div className="flex flex-col space-y-2">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="text-[14px]">Chat Links</CardTitle>
@@ -117,8 +117,8 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
         </div>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[400px] w-full rounded-md border p-4">
-          <div className="space-y-4">
+        <ScrollArea className="h-[calc(100vh-280px)]">
+          <div className="space-y-2 pr-4">
             {links?.map(link => (
               <div
                 key={link.id}

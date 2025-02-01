@@ -360,7 +360,7 @@ export default function DashboardPage() {
           </TabsContent>
         </AnimatePresence>
 
-        <TabsContent value="links" className="flex-1">
+        <TabsContent value="links" className="flex-1 pb-1">
           <ShareableLinks 
             links={links}
             onCreateLinkAction={handleCreateLink}
