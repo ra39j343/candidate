@@ -60,7 +60,7 @@ shareableLinkSchema.methods.getPublicUrl = function() {
       ? `https://echoprofile-git-${process.env.VERCEL_GIT_COMMIT_REF}-radiks-projects.vercel.app`
       : 'http://localhost:3000';
       
-  return `${baseUrl}/p/${this.id}`;
+  return `${baseUrl}/chat/public/${this.id}`;
 };
 
 // Add static method to interface
