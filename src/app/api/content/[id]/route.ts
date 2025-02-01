@@ -4,7 +4,6 @@ import { getToken } from 'next-auth/jwt'
 import { handleError } from '@/utils/handleErrors'
 import { authOptions } from '@/lib/auth'
 import { Encryption } from '@/utils/encryption'
-import { CV } from '@/models/CV'
 import { Chat } from '@/models/chat'
 import { Content } from '@/models/content'
 

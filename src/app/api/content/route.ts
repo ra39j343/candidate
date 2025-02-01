@@ -4,7 +4,6 @@ import { Content } from '@/models/content'
 import { getToken } from 'next-auth/jwt'
 import { handleError } from '@/utils/handleErrors'
 import { authOptions } from '@/lib/auth'
-import { CV } from '@/models/CV'
 
 export const dynamic = 'force-dynamic'
 

@@ -178,7 +178,7 @@ export default function DataProcessingAgreement() {
           <h2 className="text-2xl font-semibold text-gray-900">9. Contact Information</h2>
           <p className="leading-relaxed">For data processing queries, contact our Data Protection Officer:</p>
           <div className="pl-4 space-y-2">
-            <p>Email: verdyanradik@gmail.com</p>
+            <p>Email: radiktest4@gmail.com</p>
           </div>
         </div>
       </section>

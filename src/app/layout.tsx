@@ -11,10 +11,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="pb-12">
+    <html lang="en" className="w-full">
+      <body className="pb-12 w-full">
         <SessionProvider>
-          {children}
+          <main className="w-full">
+            {children}
+          </main>
           <BetaDisclaimer />
           <Toaster />
         </SessionProvider>

@@ -23,11 +23,14 @@ const dailyStatSchema = new Schema<IDailyStat>({
 
 const shareableLinkSchema = new Schema<IShareableLink>({
   userId: { type: String, required: true },
-  id: { type: String, required: true, unique: true, 
+  id: {
+    type: String,
+    required: true,
+    unique: true,
     validate: {
       validator: function(v: string) {
-        // Validate ID format: must be name-xxx where xxx is 3 chars
-        return /^[a-z0-9]+-[a-z0-9]{3}$/.test(v);
+        // Updated regex to allow underscores and both uppercase/lowercase letters
+        return /^[A-Za-z0-9_-]+$/.test(v);
       },
       message: 'Invalid link ID format'
     }

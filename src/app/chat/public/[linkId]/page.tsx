@@ -40,12 +40,7 @@ export default function PublicChatPage({ params }: { params: { linkId: string } 
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold">AI Chat Assistant</h1>
-        <p className="text-gray-600">Ask questions about the candidate</p>
-      </div>
-
+    <div className="h-screen">
       <ChatInterface 
         messages={messages}
         onSendMessage={handleSendMessage}

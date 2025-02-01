@@ -239,14 +239,14 @@ export default function DashboardPage() {
   }
 
     return (
-    <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 pb-0.5">
+    <div className="container mx-auto max-w-[1400px] h-screen p-4">
       <div className="flex justify-between items-center mb-4">
         <div className="space-y-1">
-          <h1 className="text-[14px] font-semibold tracking-tight">
-            Dashboard
+          <h1 className="text-[18px] font-semibold tracking-tight">
+            Your EchoProfile Dashboard
           </h1>
-          <p className="text-[9px] text-muted-foreground">
-            Manage your content and shareable links
+          <p className="text-[12px] text-muted-foreground">
+            Manage your content and links
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -269,11 +269,11 @@ export default function DashboardPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full max-w-[400px] grid-cols-2 p-1 bg-muted/50 backdrop-blur-sm">
-          <TabsTrigger value="content">
+          <TabsTrigger value="content" className="text-xs">
             <FileText className="mr-2 h-4 w-4" />
             Content
           </TabsTrigger>
-          <TabsTrigger value="links">
+          <TabsTrigger value="links" className="text-xs">
             <Link2 className="mr-2 h-4 w-4" />
             Links
           </TabsTrigger>

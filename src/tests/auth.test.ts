@@ -8,7 +8,7 @@ const BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
 async function testAdminLogin() {
   const credentials = {
-    email: 'verdyanradik@gmail.com',
+    email: 'radiktest4@gmail.com',
     password: 'admin123'
   }
 

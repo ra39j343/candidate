@@ -21,7 +21,7 @@ async function createProdAdmin() {
     await connectDB()
     console.log('Connected to production database')
 
-    const email = 'verdyanradik@gmail.com'    // Replace with your email
+    const email = 'radiktest4@gmail.com'    // Replace with your email
     const password = 'admin123'               // Replace with your desired password
     
     // Check if admin exists

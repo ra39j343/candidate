@@ -136,7 +136,7 @@ export default function PrivacyPolicy() {
             For any privacy-related queries contact:
           </p>
           <div className="pl-4 space-y-2">
-            <p>Email: verdyanradik@gmail.com</p>
+            <p>Email: radiktest4@gmail.com</p>
           </div>
         </div>
       </section>
