@@ -73,7 +73,7 @@ export default function ChatInterface({
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100vh-2rem)] bg-white rounded-lg shadow-md border relative">
+      <div className="flex flex-col h-screen bg-white rounded-lg shadow-md border relative">
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 bg-white border-b px-4 py-1.5">
           <div className="flex justify-between items-center">
