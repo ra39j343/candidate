@@ -55,18 +55,36 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
 
   const handleShareLinkedIn = (link: string) => {
     try {
-      const title = "Hi everyone! Check out my EchoProfile link to ask AI questions about my professional background and experience."
+      const shareText = "Hi everyone! Check out my EchoProfile link to ask AI questions about my professional background and experience. "
       const shareUrl = encodeURIComponent(link)
       
-      const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?mini=true&url=${shareUrl}&title=${encodeURIComponent(title)}&source=EchoProfile`
+      console.log('Share Text:', shareText)
+      console.log('Share URL:', shareUrl)
       
-      window.open(
+      const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?mini=true&url=${shareUrl}&title=${encodeURIComponent(shareText)}&source=EchoProfile`
+      console.log('LinkedIn Share URL:', linkedInUrl)
+      
+      const shareWindow = window.open(
         linkedInUrl,
         'linkedin-share',
         'width=600,height=600,left=' + (window.screen.width / 2 - 300) + ',top=' + (window.screen.height / 2 - 300)
       )
+
+      if (!shareWindow) {
+        console.error('Share window was blocked')
+        toast({
+          title: "Error",
+          description: "Please allow popups to share on LinkedIn",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       console.error('Share failed:', error)
+      toast({
+        title: "Error",
+        description: "Failed to share on LinkedIn",
+        variant: "destructive",
+      })
     }
   }
 

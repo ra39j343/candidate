@@ -66,10 +66,13 @@ shareableLinkSchema.statics.generateId = async function(firstName: string = '') 
   return proposedId;
 };
 
-// Add method to get public URL
-shareableLinkSchema.methods.getPublicUrl = function() {
-  // Use the production domain consistently
-  return `https://echoprofile.vercel.app/chat/public/${this.id}`;
+// Add method to get public URL with sharing text
+shareableLinkSchema.methods.getPublicUrl = function(includeText = false) {
+  const baseUrl = `https://echoprofile.vercel.app/chat/public/${this.id}`;
+  if (!includeText) return baseUrl;
+  
+  const shareText = "Hi everyone! Check out my EchoProfile link to ask AI questions about my professional background and experience.";
+  return `${shareText}\n\n${baseUrl}`;
 };
 
 // Update model export with proper typing
