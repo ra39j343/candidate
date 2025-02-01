@@ -12,10 +12,42 @@ import { Separator } from "@/components/ui/separator"
 import Link from 'next/link'
 import { BetaDisclaimer } from '@/components/BetaDisclaimer'
 
-interface Message {
+interface MessageProps {
   role: 'user' | 'assistant'
   content: string
   timestamp?: Date
+}
+
+interface ChatInterfaceProps {
+  messages?: MessageProps[]
+  onSendMessage: (message: string) => Promise<void>
+  isPublic?: boolean
+  isTest?: boolean
+  suggestedQuestions?: string[]
+}
+
+// Define Message component
+function MessageComponent({ role, content }: MessageProps) {
+  return (
+    <div className={`flex ${role === 'assistant' ? 'justify-start' : 'justify-end'}`}>
+      <div className={`flex items-start gap-2.5 max-w-[80%] ${
+        role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
+      }`}>
+        <Avatar className="w-6 h-6">
+          <AvatarFallback>
+            {role === 'assistant' ? 'AI' : 'U'}
+          </AvatarFallback>
+        </Avatar>
+        <div className={`rounded-lg px-3 py-2 text-[11px] ${
+          role === 'assistant' 
+            ? 'bg-muted' 
+            : 'bg-primary text-primary-foreground'
+        }`}>
+          {content}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 const DEFAULT_SUGGESTED_QUESTIONS = [
@@ -24,14 +56,6 @@ const DEFAULT_SUGGESTED_QUESTIONS = [
   "Tell more about candidate's leadership experience",
   "What languages does candidate speak?"
 ]
-
-interface ChatInterfaceProps {
-  messages?: Message[]
-  onSendMessage: (message: string) => Promise<void>
-  isPublic?: boolean
-  isTest?: boolean
-  suggestedQuestions?: string[]
-}
 
 export default function ChatInterface({ 
   messages = [],
@@ -125,7 +149,7 @@ export default function ChatInterface({
         <div className="flex-1 overflow-y-auto px-4">
           <div className="max-w-3xl mx-auto space-y-4 py-4">
             {messages.map((message, index) => (
-              <Message key={index} {...message} />
+              <MessageComponent key={index} {...message} />
             ))}
             {isLoading && <TypingIndicator />}
           </div>
