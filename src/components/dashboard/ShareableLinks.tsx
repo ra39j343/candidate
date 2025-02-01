@@ -55,24 +55,19 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
 
   const handleShareLinkedIn = (link: string) => {
     try {
-      const shareText = "Hi everyone! Check out my EchoProfile link to ask AI questions about my professional background and experience."
+      // Keep text shorter to look better in feed
+      const shareText = "Ask AI questions about my professional background using my EchoProfile link!"
       const shareUrl = encodeURIComponent(link)
       
-      // Debug logging
       console.group('LinkedIn Share Debug')
-      console.log('1. Original Values:', {
-        shareText,
-        link,
-        shareUrl
-      })
+      console.log('Share text:', shareText)
+      console.log('Share URL:', link)
       
-      // Add text parameter to LinkedIn's feed URL
+      // Use LinkedIn's feed URL format
       const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&shareUrl=${shareUrl}&text=${encodeURIComponent(shareText)}`
       
-      console.log('2. Final LinkedIn URL:', linkedInUrl)
-      
+      console.log('Final LinkedIn URL:', linkedInUrl)
       window.open(linkedInUrl, '_blank')
-      
       console.groupEnd()
 
     } catch (error) {

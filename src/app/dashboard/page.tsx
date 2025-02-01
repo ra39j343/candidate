@@ -239,8 +239,8 @@ export default function DashboardPage() {
   }
 
     return (
-    <div className="h-[calc(100vh-48px)]">
-      <div className="container mx-auto max-w-[1400px] h-full p-4 flex flex-col">
+    <div className="h-[calc(100vh-32px)]">
+      <div className="container mx-auto max-w-[1400px] h-full p-4 pb-2 flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <div className="space-y-1">
           <h1 className="text-[18px] font-semibold tracking-tight">
@@ -287,7 +287,7 @@ export default function DashboardPage() {
               <TextUpload onUploadSuccess={fetchContent} />
             </div>
 
-            <Card className="border-border/40 shadow-xl flex-1 flex flex-col min-h-0">
+            <Card className="border-border/40 shadow-xl flex-1 flex flex-col min-h-0 mb-1">
               <CardHeader className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
