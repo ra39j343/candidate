@@ -5,11 +5,6 @@ import { Content } from '@/models/content'
 import { cvUploadSchema } from '@/validation/schemas'
 import { handleError } from '@/utils/handleErrors'
 import { Encryption } from '@/utils/encryption'
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js'
-import path from 'path'
-
-// Configure worker for Node.js environment
-pdfjsLib.GlobalWorkerOptions.workerSrc = path.resolve(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.js')
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,14 +17,15 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File
     console.log('Upload received file:', { name: file.name, type: file.type })
 
-    // Only accept text files for now
+    cvUploadSchema.parse({ file })
+
+    // Only accept text files
     if (file.type !== 'text/plain') {
       return NextResponse.json({ 
         error: 'Only .txt files are currently supported' 
       }, { status: 400 })
     }
 
-    cvUploadSchema.parse({ file })
     const content = await file.text()
 
     await connectDB()
