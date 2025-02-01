@@ -47,8 +47,8 @@ shareableLinkSchema.index({ id: 1, userId: 1 });
 shareableLinkSchema.statics.generateId = function(firstName: string = '') {
   const sanitizedName = firstName.toLowerCase()
     .replace(/[^a-z0-9]/g, '')
-    .slice(0, 10);
-  return `echo-${sanitizedName}-${nanoid(4)}`;
+    .slice(0, 8);
+  return `${sanitizedName}-${nanoid(3)}`;
 };
 
 // Add method to get public URL
