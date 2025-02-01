@@ -59,7 +59,7 @@ export default function TestChatPage() {
   }
 
   return (
-    <div className="h-screen">
+    <div className="h-[calc(100vh-2rem)] overflow-hidden">
       <ChatInterface 
         messages={messages}
         onSendMessage={handleSendMessage}
