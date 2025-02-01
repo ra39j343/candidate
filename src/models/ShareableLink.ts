@@ -43,30 +43,38 @@ const shareableLinkSchema = new Schema<IShareableLink>({
 // Add index for faster lookups
 shareableLinkSchema.index({ id: 1, userId: 1 });
 
+// Add static method to interface
+interface ShareableLinkModel extends mongoose.Model<IShareableLink> {
+  generateId(firstName?: string): Promise<string>;
+}
+
 // Add method to generate ID with just name and short unique id
-shareableLinkSchema.statics.generateId = function(firstName: string = '') {
+shareableLinkSchema.statics.generateId = async function(firstName: string = '') {
+  // Sanitize and limit the name portion
   const sanitizedName = firstName.toLowerCase()
     .replace(/[^a-z0-9]/g, '')
-    .slice(0, 8);
-  return `${sanitizedName}-${nanoid(3)}`;
+    .slice(0, 5); // Reduced to 5 chars max
+    
+  // Generate a shorter unique part
+  const uniquePart = nanoid(3).toUpperCase(); // Using uppercase for better readability
+  
+  const proposedId = `${sanitizedName}-${uniquePart}`;
+  
+  // Verify uniqueness
+  const existing = await this.findOne({ id: proposedId });
+  if (existing) {
+    // If collision, try again with new uniquePart
+    return this.generateId(firstName);
+  }
+  
+  return proposedId;
 };
 
 // Add method to get public URL
 shareableLinkSchema.methods.getPublicUrl = function() {
-  const env = process.env.VERCEL_ENV || 'development';
-  const baseUrl = env === 'production' 
-    ? 'https://echoprofile.vercel.app'
-    : env === 'preview'
-      ? `https://echoprofile-git-${process.env.VERCEL_GIT_COMMIT_REF}-radiks-projects.vercel.app`
-      : 'http://localhost:3000';
-      
-  return `${baseUrl}/chat/public/${this.id}`;
+  // Use the production domain consistently
+  return `https://echoprofile.vercel.app/chat/public/${this.id}`;
 };
-
-// Add static method to interface
-interface ShareableLinkModel extends mongoose.Model<IShareableLink> {
-  generateId(firstName?: string): string;
-}
 
 // Update model export with proper typing
 export const ShareableLink = (mongoose.models.ShareableLink || mongoose.model<IShareableLink, ShareableLinkModel>('ShareableLink', shareableLinkSchema)) as ShareableLinkModel;
