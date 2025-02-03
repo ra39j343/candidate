@@ -48,7 +48,8 @@ export async function POST(
       link.dailyStats.push({
         date: today,
         chatsInitiated: isNewChat ? 1 : 0,
-        messagesCount: 1
+        messagesCount: 1,
+        visits: 0  // Initialize visits to 0 since this is a chat, not a visit
       })
     } else {
       // Update existing daily stat
