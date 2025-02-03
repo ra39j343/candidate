@@ -5,6 +5,7 @@ export interface IDailyStat {
   date: Date;
   chatsInitiated: number;
   messagesCount: number;
+  visits: number;
 }
 
 export interface IShareableLink extends Document {
@@ -19,6 +20,7 @@ const dailyStatSchema = new Schema<IDailyStat>({
   date: { type: Date, required: true },
   chatsInitiated: { type: Number, default: 0 },
   messagesCount: { type: Number, default: 0 },
+  visits: { type: Number, default: 0 }
 });
 
 const shareableLinkSchema = new Schema<IShareableLink>({

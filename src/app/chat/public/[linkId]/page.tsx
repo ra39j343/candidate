@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ChatInterface from '../../../../components/ChatInterface'
 
 interface Message {
@@ -11,6 +11,20 @@ interface Message {
 export default function PublicChatPage({ params }: { params: { linkId: string } }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [chatInitialized, setChatInitialized] = useState(false)
+
+  // Track visit when page loads
+  useEffect(() => {
+    const trackVisit = async () => {
+      try {
+        await fetch(`/api/links/${params.linkId}/visit`, {
+          method: 'POST'
+        })
+      } catch (error) {
+        console.error('Error tracking visit:', error)
+      }
+    }
+    trackVisit()
+  }, [params.linkId])
 
   const handleSendMessage = async (message: string) => {
     try {

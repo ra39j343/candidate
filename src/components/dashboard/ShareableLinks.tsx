@@ -83,8 +83,9 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
   const getTotalStats = (dailyStats: IDailyStat[]) => {
     return dailyStats?.reduce((acc, stat) => ({
       chats: acc.chats + (stat.chatsInitiated || 0),
-      messages: acc.messages + (stat.messagesCount || 0)
-    }), { chats: 0, messages: 0 });
+      messages: acc.messages + (stat.messagesCount || 0),
+      visits: acc.visits + (stat.visits || 0)
+    }), { chats: 0, messages: 0, visits: 0 });
   };
 
   return (
@@ -131,6 +132,9 @@ export default function ShareableLinks({ links, onCreateLinkAction, onDeleteLink
                   <div className="text-[9px] flex items-center space-x-2">
                     <Badge variant="outline">
                       Created: {new Date(link.createdAt).toLocaleDateString()}
+                    </Badge>
+                    <Badge variant="secondary">
+                      {getTotalStats(link.dailyStats).visits} visits
                     </Badge>
                     <Badge>
                       {getTotalStats(link.dailyStats).chats} chats

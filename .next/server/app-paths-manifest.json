@@ -3,5 +3,5 @@
   "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/api/content/route": "app/api/content/route.js",
-  "/chat/public/[linkId]/page": "app/chat/public/[linkId]/page.js"
+  "/api/links/route": "app/api/links/route.js"
 }
